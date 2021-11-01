@@ -7,7 +7,7 @@
 Easy to use API wrapper for steam web API.
 - Asynchronous
 
-Get started by checking the [examples]("examples/")
+Get started by checking the [examples](examples/)
 
 Currently supported APIs:
 - ResolveVanityURL
