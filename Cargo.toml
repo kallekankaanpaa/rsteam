@@ -7,6 +7,7 @@ description = "steam-api-wrapper is a easy to use async wrapper for the steam we
 license = "MIT"
 keywords = ["steam", "api", "wrapper"]
 categories = ["api-bindings", "asynchronous", "web-programming::http-client"]
+repository = "https://github.com/KnoxZZ/rsteam"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
