@@ -1,9 +1,9 @@
 [package]
-name = "steam-api-wrapper"
+name = "rsteam"
 version = "0.0.1"
 edition = "2021"
 Authors = ["Kalle Kankaanpää <kalle.kankaanpaa@protonmail.com>"]
-description = "steam-api-wrapper is a easy to use async wrapper for the steam web api"
+description = "rsteam is a easy to use async wrapper for the steam web api"
 license = "MIT"
 keywords = ["steam", "api", "wrapper"]
 categories = ["api-bindings", "asynchronous", "web-programming::http-client"]
