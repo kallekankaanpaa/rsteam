@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/github/license/KnoxZZ/rsteam)](https://github.com/KnoxZZ/rsteam/blob/master/LICENSE)
-# Steam-api-wrapper
+# rsteam
 
 Wrapper for steam web api.
 
