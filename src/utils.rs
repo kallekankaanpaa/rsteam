@@ -1,3 +1,4 @@
+use crate::SteamID;
 use serde::Deserialize;
 use std::fmt;
 
@@ -5,7 +6,7 @@ pub const AUTHORITY: &str = "api.steampowered.com";
 
 #[derive(Debug)]
 pub struct Error {
-    cause: String,
+    pub cause: String,
 }
 
 impl fmt::Display for Error {
@@ -64,4 +65,10 @@ pub(crate) struct ResponseWrapper<R> {
 #[derive(Deserialize)]
 pub(crate) struct PlayersWrapper<P> {
     pub(crate) players: Vec<P>,
+}
+
+pub(crate) fn concat_steam_ids(ids: Vec<SteamID>) -> String {
+    ids.iter()
+        .map(|id| id.to_string())
+        .fold("".to_owned(), |a, b| a + &b + ",")
 }

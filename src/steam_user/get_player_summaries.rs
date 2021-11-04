@@ -1,6 +1,6 @@
 use crate::client::SteamClient;
 use crate::steam_id::SteamID;
-use crate::utils::{PlayersWrapper, ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{concat_steam_ids, PlayersWrapper, ResponseWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -142,10 +142,7 @@ impl SteamClient {
     /// [SteamIDs](SteamID). Always check the [SteamID] from the [Summary]
     ///  struct
     pub async fn get_player_summaries(&self, ids: Vec<SteamID>) -> Result<Vec<Summary>> {
-        let id_query = ids
-            .iter()
-            .map(|id| id.to_string())
-            .fold("".to_owned(), |a, b| a + &b + ",");
+        let id_query = concat_steam_ids(ids);
         let query = format!("key={}&steamids={}", self.api_key, id_query);
         let uri = Uri::builder()
             .scheme("https")
