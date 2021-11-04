@@ -1,6 +1,6 @@
 [package]
 name = "rsteam"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 Authors = ["Kalle Kankaanpää <kalle.kankaanpaa@protonmail.com>"]
 description = "rsteam is a easy to use async wrapper for the steam web api"

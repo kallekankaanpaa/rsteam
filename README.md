@@ -11,3 +11,4 @@ Get started by checking the [examples](examples/)
 
 Currently supported APIs:
 - ResolveVanityURL
+- GetPlayerSummaries
