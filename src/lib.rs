@@ -2,7 +2,7 @@ mod steam_id;
 
 mod client;
 
-mod steam_user;
+pub mod steam_user;
 
 mod utils;
 

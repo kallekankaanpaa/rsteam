@@ -30,13 +30,13 @@ impl FromStr for EconomyBanStatus {
 
 #[derive(Debug, PartialEq)]
 pub struct BanData {
-    id: SteamID,
-    community_banned: bool,
-    vac_banned: bool,
-    number_of_game_bans: u32,
-    number_of_vac_bans: u32,
-    days_since_last_ban: u32,
-    economy_ban: EconomyBanStatus,
+    pub id: SteamID,
+    pub community_banned: bool,
+    pub vac_banned: bool,
+    pub number_of_game_bans: u32,
+    pub number_of_vac_bans: u32,
+    pub days_since_last_ban: u32,
+    pub economy_ban: EconomyBanStatus,
 }
 
 #[allow(non_snake_case)]
