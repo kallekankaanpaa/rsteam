@@ -8,6 +8,7 @@ license = "MIT"
 keywords = ["steam", "api", "wrapper"]
 categories = ["api-bindings", "asynchronous", "web-programming::http-client"]
 repository = "https://github.com/KnoxZZ/rsteam"
+documentation = "https://docs.rs/rsteam"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
