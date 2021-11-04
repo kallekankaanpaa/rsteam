@@ -1,13 +1,10 @@
-mod resolve_vanity_url;
-
-mod get_player_summaries;
-
-mod get_player_bans;
+//! Implementations for the ISteamUser interface
 
 mod get_friend_list;
-
-pub use get_player_summaries::{Status, Summary, Visibility};
-
-pub use get_player_bans::{BanData, EconomyBanStatus};
+mod get_player_bans;
+mod get_player_summaries;
+mod resolve_vanity_url;
 
 pub use get_friend_list::{Friend, Relation};
+pub use get_player_bans::{BanData, EconomyBanStatus};
+pub use get_player_summaries::{Status, Summary, Visibility};

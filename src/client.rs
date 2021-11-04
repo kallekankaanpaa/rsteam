@@ -4,6 +4,7 @@ use hyper::Client as HyperClient;
 
 use hyper_tls::HttpsConnector;
 
+/// A client which https to access the Steam API
 pub struct SteamClient {
     pub(crate) client: HyperClient<HttpsConnector<HttpConnector>, Body>,
     pub(crate) api_key: String,

@@ -12,6 +12,7 @@ impl From<ParseIntError> for SteamError {
     }
 }
 
+/// Struct to represent steam ids.
 #[derive(Debug, PartialEq, Eq)]
 pub struct SteamID {
     universe: u8,
