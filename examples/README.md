@@ -5,7 +5,7 @@
 These examples use these dependencies:
 ```
 [dependencies]
-rsteam = "0.0.4"
+rsteam = "0.0.5"
 tokio = { version = "1", features = ["full"] }
 ``` 
 
