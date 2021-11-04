@@ -12,7 +12,7 @@ impl From<ParseIntError> for SteamError {
     }
 }
 
-#[derive(Debug, serde::Deserialize, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct SteamID {
     universe: u8,
     account_type: u8,
