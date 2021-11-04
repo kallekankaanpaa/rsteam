@@ -2,7 +2,7 @@
 name = "rsteam"
 version = "0.0.3"
 edition = "2021"
-Authors = ["Kalle Kankaanpää <kalle.kankaanpaa@protonmail.com>"]
+authors = ["Kalle Kankaanpää <kalle.kankaanpaa@protonmail.com>"]
 description = "rsteam is a easy to use async wrapper for the steam web api"
 license = "MIT"
 keywords = ["steam", "api", "wrapper"]
