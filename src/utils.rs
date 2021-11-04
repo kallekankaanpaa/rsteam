@@ -1,3 +1,4 @@
+use serde::Deserialize;
 use std::fmt;
 
 pub const AUTHORITY: &str = "api.steampowered.com";
@@ -54,3 +55,13 @@ impl From<std::num::ParseIntError> for Error {
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
+
+#[derive(Deserialize)]
+pub(crate) struct ResponseWrapper<R> {
+    pub(crate) response: R,
+}
+
+#[derive(Deserialize)]
+pub(crate) struct PlayersWrapper<P> {
+    pub(crate) players: Vec<P>,
+}

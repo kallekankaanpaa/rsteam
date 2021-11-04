@@ -1,6 +1,7 @@
 use crate::client::SteamClient;
 use crate::steam_id::SteamID;
-use crate::utils::{Error, Result, AUTHORITY};
+use crate::utils::{Error, ResponseWrapper, Result, AUTHORITY};
+use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
 
@@ -13,10 +14,7 @@ struct Response {
     message: Option<String>,
 }
 
-#[derive(Deserialize)]
-struct ResponseWrapper {
-    response: Response,
-}
+type Resp = ResponseWrapper<Response>;
 
 impl SteamClient {
     /// Gets users [SteamID] based on users vanity url
@@ -30,8 +28,7 @@ impl SteamClient {
 
         let response = self.client.get(uri).await;
         let body = response?.into_body();
-        let resp = serde_json::from_slice::<ResponseWrapper>(&hyper::body::to_bytes(body).await?)?
-            .response;
+        let resp = serde_json::from_slice::<Resp>(&to_bytes(body).await?)?.response;
 
         if resp.success == 1 {
             if let Some(id) = resp.steamid {
