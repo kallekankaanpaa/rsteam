@@ -8,6 +8,7 @@
 mod client;
 mod steam_id;
 pub mod steam_user;
+pub mod steam_user_stats;
 mod utils;
 
 pub use client::SteamClient;
