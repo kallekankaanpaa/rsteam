@@ -10,7 +10,9 @@ const PATH: &str = "/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002
 
 #[derive(Deserialize, Debug)]
 pub struct AchievementData {
+    /// Name of the achievement as unlocalized token
     pub name: String,
+    // Percentage of players who have unlocked the achievement
     pub percent: f32,
 }
 

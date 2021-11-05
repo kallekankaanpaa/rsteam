@@ -1,3 +1,5 @@
+use std::net::Ipv4Addr;
+
 use crate::client::SteamClient;
 use crate::steam_id::SteamID;
 use crate::utils::{concat_steam_ids, Error, PlayersWrapper, ResponseWrapper, Result, AUTHORITY};
@@ -59,23 +61,29 @@ impl From<u8> for Status {
 pub struct Summary {
     pub id: SteamID,
     pub visibility: Visibility,
+    /// Profile state, 1 means user has configured the profile
     pub profile_state: u8,
     pub profile_name: String,
+    /// Unix timestamp of users last logoff
     pub last_logoff: u64,
     pub profile_url: String,
+    /// 32x32 pixel image
     pub avatar: String,
+    /// 64x64 pixel image
     pub avatarmedium: String,
+    /// 184x184 pixel image
     pub avatarfull: String,
     pub status: Status,
     pub comment_permission: Option<bool>,
     pub real_name: Option<String>,
-    pub primaryclanid: Option<String>,
+    pub primaryclanid: Option<SteamID>,
+    /// Unix timestamp of users creation
     pub time_created: Option<u64>,
     pub country_code: Option<String>,
     pub city_id: Option<u64>,
     pub game_id: Option<String>,
     pub game_info: Option<String>,
-    pub gameserver_ip: Option<String>,
+    pub gameserver_ip: Option<Ipv4Addr>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -119,13 +127,20 @@ impl From<RawSummary> for Summary {
                 _ => false,
             }),
             real_name: rs.realname,
-            primaryclanid: rs.primaryclanid,
+            primaryclanid: rs
+                .primaryclanid
+                .map(|id| id.parse::<u64>().ok())
+                .flatten()
+                .map(|id| id.into()),
             time_created: rs.timecreated,
             country_code: rs.loccountrycode,
             city_id: rs.loccityid,
             game_id: rs.gameid,
             game_info: rs.gameextrainfo,
-            gameserver_ip: rs.gameserverip,
+            gameserver_ip: rs
+                .gameserverip
+                .map(|ip| ip.parse::<Ipv4Addr>().ok())
+                .flatten(),
         }
     }
 }
