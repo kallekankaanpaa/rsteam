@@ -71,11 +71,11 @@ type Response = PlayersWrapper<RawBanData>;
 impl SteamClient {
     /// Gets vector of [BanData] structs
     ///
-    /// If the [SteamID] is invalid or user doesn't exist with the ID
-    /// the API just drops the [BanData] from the response. So don't assume
-    /// the returned [BanDatas](BanData) are in the same order as the
-    /// [SteamIDs](SteamID). Always check the [SteamID] from the [BanData]
-    ///  struct
+    /// Requires an API key. If the [SteamID] is invalid or user doesn't exist
+    /// with the ID the API just drops the [BanData] from the response. So
+    /// don't assume the returned [BanDatas](BanData) are in the same order as
+    /// the [SteamIDs](SteamID). Always check the [SteamID] from the [BanData]
+    /// struct
     pub async fn get_player_bans(&self, ids: Vec<SteamID>) -> Result<Vec<BanData>> {
         let api_key = self.api_key.as_ref().ok_or(Error {
             cause: "resolve_vanity_url requires an api key".to_owned(),

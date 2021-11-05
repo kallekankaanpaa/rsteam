@@ -136,9 +136,9 @@ type Response = ResponseWrapper<PlayersWrapper<RawSummary>>;
 impl SteamClient {
     /// Gets vector of player/account [Summaries](Summary).
     ///
-    /// Works with maximum of 100 [SteamIDs](SteamID). If the [SteamID]
-    /// is invalid or user doesn't exist with the ID the API just drops
-    /// the summary from the response. So don't assume the returned
+    /// Requires an API key and works with maximum of 100 [SteamIDs](SteamID).
+    /// If the [SteamID] is invalid or user doesn't exist with the ID the API
+    /// just drops the summary from the response. So don't assume the returned
     /// [Summaries](Summary) are in the same order as the [SteamIDs](SteamID).
     /// Always check the [SteamID] from the [Summary] struct.
     pub async fn get_player_summaries(&self, ids: Vec<SteamID>) -> Result<Vec<Summary>> {

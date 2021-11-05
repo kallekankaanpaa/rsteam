@@ -24,6 +24,8 @@ type Response = ResponseWrapper<Resp>;
 
 impl SteamClient {
     /// Fetches vector of [SteamIDs](SteamID) which represent the ids for the users groups
+    ///
+    /// Requires an API key.
     pub async fn get_user_group_list(&self, id: SteamID) -> Result<Vec<SteamID>> {
         let api_key = self.api_key.as_ref().ok_or(Error {
             cause: "resolve_vanity_url requires an api key".to_owned(),

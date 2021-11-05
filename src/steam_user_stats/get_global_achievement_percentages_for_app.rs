@@ -10,8 +10,8 @@ const PATH: &str = "/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002
 
 #[derive(Deserialize, Debug)]
 pub struct AchievementData {
-    name: String,
-    percent: f32,
+    pub name: String,
+    pub percent: f32,
 }
 
 #[derive(Deserialize)]
@@ -25,6 +25,9 @@ struct Response {
 }
 
 impl SteamClient {
+    /// Fetches a vector of [AchievementData] structs for the given game_id.
+    ///
+    /// Works without an API key.
     pub async fn get_global_achievement_percentages_for_app(
         &self,
         game_id: NonZeroU64,

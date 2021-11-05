@@ -25,7 +25,7 @@ type Resp = ResponseWrapper<Response>;
 impl SteamClient {
     /// Gets users [SteamID] based on users vanity url
     ///
-    /// Default [URLType] is individual.
+    /// Requires an API key. Default [URLType] is individual.
     pub async fn resolve_vanity_url(
         &self,
         vanity_url: &str,
