@@ -18,3 +18,5 @@ Currently supported interfaces:
     - GetUserGroupList
 - ISteamUserStats
     - GetGlobalAchievementPercentagesForApp
+    - GetNumberOfCurrentPlayers
+    - GetUserStatsForGame
