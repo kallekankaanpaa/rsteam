@@ -7,6 +7,12 @@ use serde::Deserialize;
 
 const PATH: &str = "/ISteamUser/ResolveVanityURL/v0001/";
 
+pub enum URLType {
+    Individual = 1,
+    Group = 2,
+    OfficalGameGroup = 3,
+}
+
 #[derive(Deserialize, Debug)]
 struct Response {
     success: u8,
@@ -18,8 +24,19 @@ type Resp = ResponseWrapper<Response>;
 
 impl SteamClient {
     /// Gets users [SteamID] based on users vanity url
-    pub async fn resolve_vanity_url(&self, vanity_url: &str) -> Result<SteamID> {
-        let query = format!("key={}&vanityurl={}", self.api_key, vanity_url);
+    pub async fn resolve_vanity_url(
+        &self,
+        vanity_url: &str,
+        url_type: Option<URLType>,
+    ) -> Result<SteamID> {
+        let type_query = match url_type {
+            Some(url_type) => format!("&url_type={}", url_type as u8),
+            None => "".to_owned(),
+        };
+        let query = format!(
+            "key={}&vanityurl={}{}",
+            self.api_key, vanity_url, type_query
+        );
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
@@ -57,14 +74,14 @@ mod tests {
     #[test]
     fn resolve_correct_url() {
         let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
-        let id = tokio_test::block_on(client.resolve_vanity_url("petesammakko")).unwrap();
+        let id = tokio_test::block_on(client.resolve_vanity_url("petesammakko", None)).unwrap();
         assert_eq!(id, SteamID::from(76561198061271782));
     }
 
     #[test]
     fn handle_incorrect_url() {
         let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
-        let id = tokio_test::block_on(client.resolve_vanity_url(""));
+        let id = tokio_test::block_on(client.resolve_vanity_url("", None));
         assert_err!(id, "invalid ID should result in error");
     }
 }
