@@ -1,6 +1,6 @@
 use crate::client::SteamClient;
 use crate::steam_id::SteamID;
-use crate::utils::{concat_steam_ids, PlayersWrapper, ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{concat_steam_ids, Error, PlayersWrapper, ResponseWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -136,12 +136,17 @@ type Response = ResponseWrapper<PlayersWrapper<RawSummary>>;
 impl SteamClient {
     /// Gets vector of player/account [Summaries](Summary).
     ///
-    /// If the [SteamID] is invalid or user doesn't exist with the ID
-    /// the API just drops the summary from the response. So don't assume
-    /// the returned [Summaries](Summary) are in the same order as the
-    /// [SteamIDs](SteamID). Always check the [SteamID] from the [Summary]
-    ///  struct
+    /// Works with maximum of 100 [SteamIDs](SteamID). If the [SteamID]
+    /// is invalid or user doesn't exist with the ID the API just drops
+    /// the summary from the response. So don't assume the returned
+    /// [Summaries](Summary) are in the same order as the [SteamIDs](SteamID).
+    /// Always check the [SteamID] from the [Summary] struct.
     pub async fn get_player_summaries(&self, ids: Vec<SteamID>) -> Result<Vec<Summary>> {
+        if ids.len() > 100 {
+            return Err(Error {
+                cause: "Too many IDs for get_player_summaries()".to_owned(),
+            });
+        }
         let id_query = concat_steam_ids(ids);
         let query = format!("key={}&steamids={}", self.api_key, id_query);
         let uri = Uri::builder()
