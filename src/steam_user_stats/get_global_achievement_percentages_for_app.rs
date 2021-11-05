@@ -1,5 +1,7 @@
+use std::num::NonZeroU64;
+
 use crate::client::SteamClient;
-use crate::utils::{Result, AUTHORITY};
+use crate::utils::{Error, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -25,7 +27,7 @@ struct Response {
 impl SteamClient {
     pub async fn get_global_achievement_percentages_for_app(
         &self,
-        game_id: u32,
+        game_id: NonZeroU64,
     ) -> Result<Vec<AchievementData>> {
         let query = format!("key={}&gameid={}", self.api_key, game_id);
         let uri = Uri::builder()
@@ -36,7 +38,10 @@ impl SteamClient {
 
         let raw_response = self.client.get(uri).await?;
         let raw_body = raw_response.into_body();
-        let response: Response = serde_json::from_slice(&to_bytes(raw_body).await?)?;
+        let response: Response =
+            serde_json::from_slice(&to_bytes(raw_body).await?).map_err(|_| Error {
+                cause: "No game with game_id or game hasn't enabled achievements".to_owned(),
+            })?;
 
         Ok(response.achievementpercentages.achievements)
     }
@@ -46,13 +51,24 @@ impl SteamClient {
 mod tests {
     use super::*;
     use std::env;
+    use tokio_test::{assert_err, block_on};
 
     #[test]
     fn correct_csgo_achievements() {
         let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
+        let game_id = NonZeroU64::new(730).unwrap();
         let achievements =
-            tokio_test::block_on(client.get_global_achievement_percentages_for_app(730)).unwrap();
+            block_on(client.get_global_achievement_percentages_for_app(game_id)).unwrap();
 
         assert_eq!(167, achievements.len());
+    }
+
+    #[test]
+    fn unknown_game_id_handeled_correctly() {
+        let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
+        let game_id = NonZeroU64::new(731).unwrap();
+        let achievements = block_on(client.get_global_achievement_percentages_for_app(game_id));
+
+        assert_err!(achievements);
     }
 }
