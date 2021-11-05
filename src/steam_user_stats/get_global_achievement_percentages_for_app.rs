@@ -29,7 +29,7 @@ impl SteamClient {
         &self,
         game_id: NonZeroU64,
     ) -> Result<Vec<AchievementData>> {
-        let query = format!("key={}&gameid={}", self.api_key, game_id);
+        let query = format!("gameid={}", game_id);
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
@@ -50,12 +50,11 @@ impl SteamClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::env;
     use tokio_test::{assert_err, block_on};
 
     #[test]
     fn correct_csgo_achievements() {
-        let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
+        let client = SteamClient::new();
         let game_id = NonZeroU64::new(730).unwrap();
         let achievements =
             block_on(client.get_global_achievement_percentages_for_app(game_id)).unwrap();
@@ -65,7 +64,7 @@ mod tests {
 
     #[test]
     fn unknown_game_id_handeled_correctly() {
-        let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
+        let client = SteamClient::new();
         let game_id = NonZeroU64::new(731).unwrap();
         let achievements = block_on(client.get_global_achievement_percentages_for_app(game_id));
 

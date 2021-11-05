@@ -77,8 +77,11 @@ impl SteamClient {
     /// [SteamIDs](SteamID). Always check the [SteamID] from the [BanData]
     ///  struct
     pub async fn get_player_bans(&self, ids: Vec<SteamID>) -> Result<Vec<BanData>> {
+        let api_key = self.api_key.as_ref().ok_or(Error {
+            cause: "resolve_vanity_url requires an api key".to_owned(),
+        })?;
         let id_query = concat_steam_ids(ids);
-        let query = format!("key={}&steamids={}", self.api_key, id_query);
+        let query = format!("key={}&steamids={}", api_key, id_query);
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
@@ -99,7 +102,7 @@ mod tests {
 
     #[test]
     fn works() {
-        let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
+        let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let ban_data =
             tokio_test::block_on(client.get_player_bans(vec![SteamID::from(76561198061271782)]))
                 .unwrap();

@@ -77,11 +77,14 @@ impl SteamClient {
         id: SteamID,
         relationship: Option<Relation>,
     ) -> Result<Vec<Friend>> {
+        let api_key = self.api_key.as_ref().ok_or(Error {
+            cause: "resolve_vanity_url requires an api key".to_owned(),
+        })?;
         let relation = match relationship {
             Some(relation) => format!("&relationship={}", relation.to_string()),
             None => "".to_owned(),
         };
-        let query = format!("key={}&steamid={}{}", self.api_key, id, relation);
+        let query = format!("key={}&steamid={}{}", api_key, id, relation);
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
@@ -102,7 +105,7 @@ mod tests {
 
     #[test]
     fn works() {
-        let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
+        let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let friends =
             tokio_test::block_on(client.get_friend_list(SteamID::from(76561198061271782), None))
                 .unwrap();

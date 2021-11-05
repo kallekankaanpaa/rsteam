@@ -142,13 +142,16 @@ impl SteamClient {
     /// [Summaries](Summary) are in the same order as the [SteamIDs](SteamID).
     /// Always check the [SteamID] from the [Summary] struct.
     pub async fn get_player_summaries(&self, ids: Vec<SteamID>) -> Result<Vec<Summary>> {
+        let api_key = self.api_key.as_ref().ok_or(Error {
+            cause: "resolve_vanity_url requires an api key".to_owned(),
+        })?;
         if ids.len() > 100 {
             return Err(Error {
                 cause: "Too many IDs for get_player_summaries()".to_owned(),
             });
         }
         let id_query = concat_steam_ids(ids);
-        let query = format!("key={}&steamids={}", self.api_key, id_query);
+        let query = format!("key={}&steamids={}", api_key, id_query);
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
@@ -170,30 +173,28 @@ mod tests {
 
     #[test]
     fn works_with_single() {
-        let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
+        let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let summary = tokio_test::block_on(
             client.get_player_summaries(vec![SteamID::from(76561198061271782)]),
         )
         .unwrap();
         assert!(summary.len() == 1);
-        //println!("{:?}", summary);
     }
 
     #[test]
     fn works_with_multiple() {
-        let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
+        let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let summary = tokio_test::block_on(client.get_player_summaries(vec![
             SteamID::from(76561198061271782),
             SteamID::from(76561198072766352),
         ]))
         .unwrap();
         assert!(summary.len() == 2);
-        //println!("{:?}", summary);
     }
 
     #[test]
     fn works_with_invalid() {
-        let client = SteamClient::new(&env::var("STEAM_API_KEY").unwrap());
+        let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let summary = tokio_test::block_on(
             client.get_player_summaries(vec![SteamID::from(7656119806127178)]),
         )
