@@ -1,6 +1,6 @@
 use std::env;
 
-use rsteam::steam_user::BanData;
+use rsteam::steam_user::{BanData, URLType};
 use rsteam::{SteamClient, SteamID};
 
 #[tokio::main]
@@ -23,7 +23,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let client = SteamClient::new(&api_key);
 
-    let id = client.resolve_vanity_url(&vanity_url).await?;
+    let id = client
+        .resolve_vanity_url(&vanity_url, Some(URLType::Individual))
+        .await?;
 
     let friends = client.get_friend_list(id, None).await?;
 

@@ -22,7 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let client = SteamClient::new(&api_key);
 
-    let id = client.resolve_vanity_url(&vanity_url).await?;
+    let id = client.resolve_vanity_url(&vanity_url, None).await?;
 
     println!("{}", id);
 
