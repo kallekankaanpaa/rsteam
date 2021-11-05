@@ -9,9 +9,12 @@ Easy to use API wrapper for steam web API.
 
 Get started by checking the [examples](examples/)
 
-Currently supported APIs:
-- ResolveVanityURL
-- GetPlayerSummaries
-- GetPlayerBans
-- GetFriendList
-- GetUserGroupList
+Currently supported interfaces:
+- ISteamUser
+    - ResolveVanityURL
+    - GetPlayerSummaries
+    - GetPlayerBans
+    - GetFriendList
+    - GetUserGroupList
+- ISteamUserStats
+    - GetGlobalAchievementPercentagesForApp

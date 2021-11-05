@@ -1,5 +1,5 @@
 use crate::client::SteamClient;
-use crate::utils::{Error, ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
