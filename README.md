@@ -20,6 +20,10 @@ Currently supported interfaces:
     - GetGlobalAchievementPercentagesForApp
     - GetNumberOfCurrentPlayers
     - GetUserStatsForGame
+- IPlayerService
     - GetBadges
     - GetCommunityBadgeProcess
+    - GetOwnedGames
+    - GetRecentlyPlayedGames
+    - GetSteamLevel
     - IsPlayingSharedGame
