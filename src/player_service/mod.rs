@@ -1,6 +1,7 @@
 //! Implementations for the IPlayerService interface
 
 mod get_badges;
+mod get_community_badge_progress;
 mod get_owned_games;
 mod get_recently_played_games;
 mod get_steam_level;
