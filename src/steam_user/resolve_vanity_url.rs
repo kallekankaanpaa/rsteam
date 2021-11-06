@@ -1,6 +1,7 @@
 use crate::client::SteamClient;
+use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{Error, ErrorKind, ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{ResponseWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -32,8 +33,9 @@ impl SteamClient {
         url_type: Option<URLType>,
     ) -> Result<SteamID> {
         let api_key = self
-            .api_key()
-            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .api_key
+            .as_ref()
+            .ok_or(Error::Client("API key required".to_owned()))?;
         let type_query = match url_type {
             Some(url_type) => format!("&url_type={}", url_type as u8),
             None => "".to_owned(),
@@ -45,25 +47,32 @@ impl SteamClient {
             .path_and_query(format!("{}?{}", PATH, query))
             .build()?;
 
-        let response = self.client.get(uri).await;
-        let body = response?.into_body();
-        let resp = serde_json::from_slice::<Resp>(&to_bytes(body).await?)?.response;
+        let raw_response = self.client.get(uri).await;
+        let raw_body = raw_response?.into_body();
+        let response = serde_json::from_slice::<Resp>(&to_bytes(raw_body).await?)?.response;
 
-        if resp.success == 1 {
-            if let Some(id) = resp.steamid {
-                Ok(id.parse::<u64>()?.into())
+        let Response {
+            success,
+            steamid,
+            message,
+        } = response;
+
+        if success == 1 {
+            if let Some(id) = steamid {
+                Ok(id
+                    .parse::<u64>()
+                    .map_err(|_| Error::Client("returned steamid is invalid".to_owned()))?
+                    .into())
             } else {
-                Err(Error::new(ErrorKind::Other {
-                    cause: "response had success flag but didn't contain a steamid".to_owned(),
-                }))
+                Err(Error::Client(
+                    "request was successfull but didn't contain steamid".to_owned(),
+                ))
             }
         } else {
-            Err(Error::new(ErrorKind::Other {
-                cause: format!(
-                    "request failed, {}",
-                    resp.message.unwrap_or("no message".to_owned())
-                ),
-            }))
+            Err(Error::Client(format!(
+                "request failed: {}",
+                message.unwrap_or("no message".to_owned())
+            )))
         }
     }
 }

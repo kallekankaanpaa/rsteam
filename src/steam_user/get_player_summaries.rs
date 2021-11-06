@@ -1,10 +1,9 @@
 use std::net::Ipv4Addr;
 
 use crate::client::SteamClient;
+use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{
-    concat_steam_ids, Error, ErrorKind, PlayersWrapper, ResponseWrapper, Result, AUTHORITY,
-};
+use crate::utils::{concat_steam_ids, PlayersWrapper, ResponseWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -160,12 +159,11 @@ impl SteamClient {
     /// Always check the [SteamID] from the [Summary] struct.
     pub async fn get_player_summaries(&self, ids: Vec<SteamID>) -> Result<Vec<Summary>> {
         let api_key = self
-            .api_key()
-            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .api_key
+            .as_ref()
+            .ok_or(Error::Client("API key required".to_owned()))?;
         if ids.len() > 100 {
-            Err(Error::new(ErrorKind::Other {
-                cause: "Too many IDs for get_player_summaries()".to_owned(),
-            }))?;
+            Err(Error::Client("too many IDs (> 100)".to_owned()))?;
         }
         let id_query = concat_steam_ids(ids);
         let query = format!("key={}&steamids={}", api_key, id_query);

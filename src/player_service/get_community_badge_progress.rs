@@ -1,4 +1,5 @@
-use crate::utils::{Error, ErrorKind, ResponseWrapper, Result, AUTHORITY};
+use crate::error::Error;
+use crate::utils::{ResponseWrapper, Result, AUTHORITY};
 use crate::{SteamClient, SteamID};
 use hyper::body::to_bytes;
 use hyper::Uri;
@@ -24,8 +25,9 @@ impl SteamClient {
     /// Resturns the current community badge process for user
     pub async fn get_community_badge_progress(&self, id: SteamID) -> Result<Vec<Quest>> {
         let api_key = self
-            .api_key()
-            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .api_key
+            .as_ref()
+            .ok_or(Error::Client("API key required".to_owned()))?;
 
         let query = format!("key={}&steamid={}", api_key, id);
 

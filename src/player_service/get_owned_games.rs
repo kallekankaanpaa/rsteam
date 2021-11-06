@@ -1,4 +1,5 @@
-use crate::utils::{format_query_param, Error, ErrorKind, ResponseWrapper, Result, AUTHORITY};
+use crate::error::Error;
+use crate::utils::{format_query_param, ResponseWrapper, Result, AUTHORITY};
 use crate::{SteamClient, SteamID};
 use serde::Deserialize;
 use serde_json::from_slice;
@@ -45,8 +46,9 @@ impl SteamClient {
         skip_unvetted_apps: Option<bool>,        // default false?
     ) -> Result<OwnedGames> {
         let api_key = self
-            .api_key()
-            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .api_key
+            .as_ref()
+            .ok_or(Error::Client("API key required".to_owned()))?;
 
         let q1 = format_query_param(include_app_info, "include_appinfo");
         let q2 = format_query_param(include_played_free_games, "include_played_free_games");

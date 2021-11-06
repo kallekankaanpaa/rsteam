@@ -1,8 +1,9 @@
 use std::str::FromStr;
 
 use crate::client::SteamClient;
+use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{concat_steam_ids, Error, ErrorKind, PlayersWrapper, Result, AUTHORITY};
+use crate::utils::{concat_steam_ids, PlayersWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -78,8 +79,9 @@ impl SteamClient {
     /// struct
     pub async fn get_player_bans(&self, ids: Vec<SteamID>) -> Result<Vec<BanData>> {
         let api_key = self
-            .api_key()
-            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .api_key
+            .as_ref()
+            .ok_or(Error::Client("API key required".to_owned()))?;
         let id_query = concat_steam_ids(ids);
         let query = format!("key={}&steamids={}", api_key, id_query);
         let uri = Uri::builder()

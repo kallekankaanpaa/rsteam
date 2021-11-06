@@ -1,7 +1,8 @@
 use std::num::NonZeroU32;
 
 use crate::client::SteamClient;
-use crate::utils::{Error, ErrorKind, ResponseWrapper, Result, AUTHORITY};
+use crate::error::Error;
+use crate::utils::{ResponseWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -30,12 +31,8 @@ impl SteamClient {
 
         let raw_response = self.client.get(uri).await?;
         let raw_body = raw_response.into_body();
-        let response: Response =
-            serde_json::from_slice(&to_bytes(raw_body).await?).map_err(|_| {
-                Error::new(ErrorKind::Other {
-                    cause: "No game with game_id".to_owned(),
-                })
-            })?;
+        let response: Response = serde_json::from_slice(&to_bytes(raw_body).await?)
+            .map_err(|_| Error::Client("No game with provided game_id".to_owned()))?;
 
         let PlayerCount {
             player_count,
@@ -45,9 +42,9 @@ impl SteamClient {
         if result == 1 && player_count.is_some() {
             Ok(player_count.unwrap())
         } else {
-            Err(Error::new(ErrorKind::Other {
-                cause: "Request failed check that game_id is valid".to_owned(),
-            }))
+            Err(Error::Client(
+                "request failed  check that game_id is valid".to_owned(),
+            ))
         }
     }
 }

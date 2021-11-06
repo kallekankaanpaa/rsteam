@@ -1,4 +1,5 @@
-use crate::utils::{Error, ErrorKind, ResponseWrapper, Result, AUTHORITY};
+use crate::error::Error;
+use crate::utils::{ResponseWrapper, Result, AUTHORITY};
 use crate::{SteamClient, SteamID};
 use hyper::body::to_bytes;
 use hyper::Uri;
@@ -18,8 +19,9 @@ impl SteamClient {
     /// Returns the lenders steamid if user is playing shared game
     pub async fn is_playing_shared_game(&self, id: SteamID, appid: u32) -> Result<Option<SteamID>> {
         let api_key = self
-            .api_key()
-            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .api_key
+            .as_ref()
+            .ok_or(Error::Client("API key required".to_owned()))?;
 
         let query = format!("key={}&steamid={}&appid={}", api_key, id, appid);
 
@@ -35,7 +37,14 @@ impl SteamClient {
         let Lender { lender_steamid } = response.response;
 
         if lender_steamid != "0" {
-            Ok(Some(lender_steamid.parse::<u64>()?.into()))
+            Ok(Some(
+                lender_steamid
+                    .parse::<u64>()
+                    .map_err(|_| {
+                        Error::Client("request succeeded but lenders steamid is invalid".to_owned())
+                    })?
+                    .into(),
+            ))
         } else {
             Ok(None)
         }

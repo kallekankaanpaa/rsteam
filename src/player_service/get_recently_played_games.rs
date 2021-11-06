@@ -1,4 +1,5 @@
-use crate::utils::{Error, ErrorKind, ResponseWrapper, Result, AUTHORITY};
+use crate::error::Error;
+use crate::utils::{ResponseWrapper, Result, AUTHORITY};
 use crate::{SteamClient, SteamID};
 use serde::Deserialize;
 use serde_json::from_slice;
@@ -42,8 +43,10 @@ impl SteamClient {
         count: Option<u32>,
     ) -> Result<RecentlyPlayedGames> {
         let api_key = self
-            .api_key()
-            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .api_key
+            .as_ref()
+            .ok_or(Error::Client("API key required".to_owned()))?;
+
         let count_query = count
             .map(|c| format!("&count={}", c))
             .unwrap_or("".to_owned());

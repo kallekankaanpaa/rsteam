@@ -2,8 +2,9 @@ use std::fmt;
 use std::str::FromStr;
 
 use crate::client::SteamClient;
+use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{Error, ErrorKind, Result, AUTHORITY};
+use crate::utils::{Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -80,8 +81,9 @@ impl SteamClient {
         relationship: Option<Relation>,
     ) -> Result<Vec<Friend>> {
         let api_key = self
-            .api_key()
-            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .api_key
+            .as_ref()
+            .ok_or(Error::Client("API key required".to_owned()))?;
         let relation = match relationship {
             Some(relation) => format!("&relationship={}", relation.to_string()),
             None => "".to_owned(),

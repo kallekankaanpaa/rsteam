@@ -1,4 +1,5 @@
-use crate::utils::{Error, ErrorKind, ResponseWrapper, Result, AUTHORITY};
+use crate::error::Error;
+use crate::utils::{ResponseWrapper, Result, AUTHORITY};
 use crate::{SteamClient, SteamID};
 
 use hyper::body::to_bytes;
@@ -28,8 +29,9 @@ impl SteamClient {
     /// Requires an API key.
     pub async fn get_user_group_list(&self, id: SteamID) -> Result<Vec<SteamID>> {
         let api_key = self
-            .api_key()
-            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .api_key
+            .as_ref()
+            .ok_or(Error::Client("API key required".to_owned()))?;
         let query = format!("key={}&steamid={}", api_key, id);
         let uri = Uri::builder()
             .scheme("https")
@@ -50,9 +52,7 @@ impl SteamClient {
                 .map(|n| n.into())
                 .collect::<Vec<SteamID>>())
         } else {
-            Err(Error::new(ErrorKind::Other {
-                cause: "Request failed".to_owned(),
-            }))
+            Err(Error::Client("request failed".to_owned()))
         }
     }
 }
