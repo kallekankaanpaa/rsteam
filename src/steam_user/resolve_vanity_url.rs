@@ -1,6 +1,6 @@
 use crate::client::SteamClient;
 use crate::steam_id::SteamID;
-use crate::utils::{Error, ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{Error, ErrorKind, ResponseWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -31,9 +31,9 @@ impl SteamClient {
         vanity_url: &str,
         url_type: Option<URLType>,
     ) -> Result<SteamID> {
-        let api_key = self.api_key.as_ref().ok_or(Error {
-            cause: "resolve_vanity_url requires an api key".to_owned(),
-        })?;
+        let api_key = self
+            .api_key()
+            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
         let type_query = match url_type {
             Some(url_type) => format!("&url_type={}", url_type as u8),
             None => "".to_owned(),
@@ -53,15 +53,17 @@ impl SteamClient {
             if let Some(id) = resp.steamid {
                 Ok(id.parse::<u64>()?.into())
             } else {
-                Err(Error::new(
-                    "response had success flag but didn't contain a steamid".to_owned(),
-                ))
+                Err(Error::new(ErrorKind::Other {
+                    cause: "response had success flag but didn't contain a steamid".to_owned(),
+                }))
             }
         } else {
-            Err(Error::new(format!(
-                "request failed, {}",
-                resp.message.unwrap_or("no message".to_owned())
-            )))
+            Err(Error::new(ErrorKind::Other {
+                cause: format!(
+                    "request failed, {}",
+                    resp.message.unwrap_or("no message".to_owned())
+                ),
+            }))
         }
     }
 }

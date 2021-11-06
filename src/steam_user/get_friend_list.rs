@@ -3,7 +3,7 @@ use std::str::FromStr;
 
 use crate::client::SteamClient;
 use crate::steam_id::SteamID;
-use crate::utils::{Error, Result, AUTHORITY};
+use crate::utils::{Error, ErrorKind, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -79,9 +79,9 @@ impl SteamClient {
         id: SteamID,
         relationship: Option<Relation>,
     ) -> Result<Vec<Friend>> {
-        let api_key = self.api_key.as_ref().ok_or(Error {
-            cause: "resolve_vanity_url requires an api key".to_owned(),
-        })?;
+        let api_key = self
+            .api_key()
+            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
         let relation = match relationship {
             Some(relation) => format!("&relationship={}", relation.to_string()),
             None => "".to_owned(),

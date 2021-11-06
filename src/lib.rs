@@ -6,6 +6,7 @@
 //! [hyper]: https://hyper.rs/
 
 mod client;
+pub mod player_service;
 mod steam_id;
 pub mod steam_user;
 pub mod steam_user_stats;

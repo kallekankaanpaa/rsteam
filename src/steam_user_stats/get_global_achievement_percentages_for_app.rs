@@ -1,7 +1,7 @@
 use std::num::NonZeroU64;
 
 use crate::client::SteamClient;
-use crate::utils::{Error, Result, AUTHORITY};
+use crate::utils::{Error, ErrorKind, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -45,7 +45,9 @@ impl SteamClient {
         let raw_body = raw_response.into_body();
         let response: Response =
             serde_json::from_slice(&to_bytes(raw_body).await?).map_err(|_| Error {
-                cause: "No game with game_id or game hasn't enabled achievements".to_owned(),
+                kind: ErrorKind::Other {
+                    cause: "No game with game_id or game hasn't enabled achievements".to_owned(),
+                },
             })?;
 
         Ok(response.achievementpercentages.achievements)

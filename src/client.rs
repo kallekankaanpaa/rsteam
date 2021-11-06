@@ -1,3 +1,4 @@
+use crate::utils::{Error, ErrorKind, Result};
 use hyper::client::HttpConnector;
 use hyper::Body;
 use hyper::Client as HyperClient;
@@ -10,7 +11,7 @@ use hyper_tls::HttpsConnector;
 /// of APIs are available for the client.
 pub struct SteamClient {
     pub(crate) client: HyperClient<HttpsConnector<HttpConnector>, Body>,
-    pub(crate) api_key: Option<String>,
+    api_key: Option<String>,
 }
 
 impl SteamClient {
@@ -35,6 +36,13 @@ impl SteamClient {
         SteamClient {
             client: HyperClient::builder().build::<_, Body>(https_connector),
             api_key: None,
+        }
+    }
+
+    pub(crate) fn api_key(&self) -> Result<String> {
+        match &self.api_key {
+            Some(key) => Ok(key.to_owned()),
+            None => Err(Error::new(ErrorKind::NoAPIKey)),
         }
     }
 }

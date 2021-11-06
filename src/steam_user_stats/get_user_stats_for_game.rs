@@ -1,6 +1,6 @@
 use std::num::NonZeroU32;
 
-use crate::utils::{Error, Result, AUTHORITY};
+use crate::utils::{Error, ErrorKind, Result, AUTHORITY};
 use crate::{SteamClient, SteamID};
 
 use hyper::body::to_bytes;
@@ -64,9 +64,9 @@ impl SteamClient {
         id: SteamID,
         game_id: NonZeroU32,
     ) -> Result<PlayerStats> {
-        let api_key = self.api_key.as_ref().ok_or(Error {
-            cause: "resolve_vanity_url requires an api key".to_owned(),
-        })?;
+        let api_key = self
+            .api_key()
+            .map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
         let query = format!("key={}&steamid={}&appid={}", api_key, id, game_id);
         let uri = Uri::builder()
             .scheme("https")
