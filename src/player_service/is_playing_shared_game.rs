@@ -15,6 +15,7 @@ struct Lender {
 type Response = ResponseWrapper<Lender>;
 
 impl SteamClient {
+    /// Returns the lenders steamid if user is playing shared game
     pub async fn is_playing_shared_game(&self, id: SteamID, appid: u32) -> Result<Option<SteamID>> {
         let api_key = self
             .api_key()

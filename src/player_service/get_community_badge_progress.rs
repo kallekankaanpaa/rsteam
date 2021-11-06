@@ -21,6 +21,7 @@ struct Quests {
 type Response = ResponseWrapper<Quests>;
 
 impl SteamClient {
+    /// Resturns the current community badge process for user
     pub async fn get_community_badge_progress(&self, id: SteamID) -> Result<Vec<Quest>> {
         let api_key = self
             .api_key()

@@ -31,6 +31,7 @@ pub struct Badges {
 type Response = ResponseWrapper<Badges>;
 
 impl SteamClient {
+    /// Returns all badges user has and info about level
     pub async fn get_badges(&self, id: SteamID) -> Result<Badges> {
         let api_key = self
             .api_key()

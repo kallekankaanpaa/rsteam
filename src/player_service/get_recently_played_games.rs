@@ -32,6 +32,10 @@ pub struct RecentlyPlayedGames {
 type Response = ResponseWrapper<RecentlyPlayedGames>;
 
 impl SteamClient {
+    /// Returns info about users recently played games.
+    ///
+    /// Length of games vector can be limited by settings the optional
+    /// count parameter. By default there is no limit.
     pub async fn get_recently_played_games(
         &self,
         id: SteamID,

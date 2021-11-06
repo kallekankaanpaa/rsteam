@@ -16,7 +16,7 @@ struct Level {
 type Response = ResponseWrapper<Level>;
 
 impl SteamClient {
-    /// Gets users steam level
+    /// Returns users steam level
     pub async fn get_steam_level(&self, id: SteamID) -> Result<u32> {
         let api_key = self
             .api_key()

@@ -20,3 +20,6 @@ Currently supported interfaces:
     - GetGlobalAchievementPercentagesForApp
     - GetNumberOfCurrentPlayers
     - GetUserStatsForGame
+    - GetBadges
+    - GetCommunityBadgeProcess
+    - IsPlayingSharedGame

@@ -31,6 +31,10 @@ pub struct OwnedGames {
 type Response = ResponseWrapper<OwnedGames>;
 
 impl SteamClient {
+    /// Returns a vector of games user owns
+    ///
+    /// These games can be filtered with the optional parameters.
+    /// All optional parameters are `false` by default
     pub async fn get_owned_games(
         &self,
         id: SteamID,
