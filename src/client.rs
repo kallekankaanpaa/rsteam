@@ -3,7 +3,7 @@ use hyper::client::HttpConnector;
 use hyper::Body;
 use hyper::Client as HyperClient;
 
-use hyper_tls::HttpsConnector;
+use hyper_rustls::HttpsConnector;
 
 /// Client to make API requests easily.
 ///
@@ -19,7 +19,7 @@ impl SteamClient {
     ///
     /// Client with API key can use all available APIs.
     pub fn with_api_key(key: &str) -> Self {
-        let https_connector = HttpsConnector::new();
+        let https_connector = HttpsConnector::with_native_roots();
 
         SteamClient {
             client: HyperClient::builder().build::<_, Body>(https_connector),
@@ -31,7 +31,7 @@ impl SteamClient {
     ///
     /// Client without an API key can only use a subset of the APIs.
     pub fn new() -> Self {
-        let https_connector = HttpsConnector::new();
+        let https_connector = HttpsConnector::with_native_roots();
 
         SteamClient {
             client: HyperClient::builder().build::<_, Body>(https_connector),
