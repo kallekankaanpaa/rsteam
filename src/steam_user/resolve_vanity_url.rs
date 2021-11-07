@@ -1,17 +1,25 @@
 use crate::client::SteamClient;
 use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{format_query_param, ResponseWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
+use std::fmt;
 
 const PATH: &str = "/ISteamUser/ResolveVanityURL/v0001/";
 
+#[derive(Clone, Copy)]
 pub enum URLType {
     Individual = 1,
     Group = 2,
     OfficalGameGroup = 3,
+}
+
+impl fmt::Display for URLType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", *self as u8)
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -35,11 +43,9 @@ impl SteamClient {
         let api_key = self
             .api_key
             .as_ref()
-            .ok_or(Error::Client("API key required".to_owned()))?;
-        let type_query = match url_type {
-            Some(url_type) => format!("&url_type={}", url_type as u8),
-            None => "".to_owned(),
-        };
+            .ok_or_else(|| Error::client("API key required"))?;
+
+        let type_query = format_query_param(url_type, "url_type");
         let query = format!("key={}&vanityurl={}{}", api_key, vanity_url, type_query);
         let uri = Uri::builder()
             .scheme("https")
@@ -71,7 +77,7 @@ impl SteamClient {
         } else {
             Err(Error::Client(format!(
                 "request failed: {}",
-                message.unwrap_or("no message".to_owned())
+                message.unwrap_or_else(|| "no message".to_owned())
             )))
         }
     }

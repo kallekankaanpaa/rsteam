@@ -1,5 +1,5 @@
 use crate::error::Error;
-use crate::utils::{ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{format_query_param, ResponseWrapper, Result, AUTHORITY};
 use crate::{SteamClient, SteamID};
 use serde::Deserialize;
 use serde_json::from_slice;
@@ -45,11 +45,9 @@ impl SteamClient {
         let api_key = self
             .api_key
             .as_ref()
-            .ok_or(Error::Client("API key required".to_owned()))?;
+            .ok_or_else(|| Error::client("API key required"))?;
 
-        let count_query = count
-            .map(|c| format!("&count={}", c))
-            .unwrap_or("".to_owned());
+        let count_query = format_query_param(count, "count");
 
         let query = format!("key={}&steamid={}{}", api_key, id, count_query);
         let uri = Uri::builder()

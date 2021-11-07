@@ -49,7 +49,8 @@ impl SteamClient {
         let api_key = self
             .api_key
             .as_ref()
-            .ok_or(Error::Client("API key required".to_owned()))?;
+            .ok_or_else(|| Error::client("API key required"))?;
+
         let id_query = concat_steam_ids(ids);
         let query = format!("key={}&steamids={}", api_key, id_query);
         let uri = Uri::builder()

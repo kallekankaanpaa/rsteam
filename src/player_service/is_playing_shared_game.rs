@@ -21,7 +21,7 @@ impl SteamClient {
         let api_key = self
             .api_key
             .as_ref()
-            .ok_or(Error::Client("API key required".to_owned()))?;
+            .ok_or_else(|| Error::client("API key required"))?;
 
         let query = format!("key={}&steamid={}&appid={}", api_key, id, appid);
 

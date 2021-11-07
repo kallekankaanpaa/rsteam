@@ -29,7 +29,7 @@ pub(crate) fn format_query_param<T: std::fmt::Display>(
 ) -> String {
     optional_param
         .map(|p| format!("&{}={}", param_name, p))
-        .unwrap_or("".to_owned())
+        .unwrap_or_else(String::new)
 }
 
 pub(crate) fn bool_from_int_maybe_missing<'de, D>(

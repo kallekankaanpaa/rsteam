@@ -31,13 +31,14 @@ impl fmt::Display for SteamID {
     }
 }
 
+#[allow(clippy::from_over_into)]
 impl Into<u64> for &SteamID {
     fn into(self) -> u64 {
         let universe = (self.universe as u64) << 56;
         let account_type = (self.account_type as u64) << 52;
         let instance = 1_u64 << 32;
         let account_id = self.account_id as u64;
-        0_u64 | universe | account_type | instance | account_id
+        universe | account_type | instance | account_id
     }
 }
 
@@ -58,7 +59,7 @@ impl TryFrom<String> for SteamID {
     type Error = Error;
     fn try_from(s: String) -> Result<Self, Self::Error> {
         s.parse::<u64>()
-            .map(|id| SteamID::from(id))
+            .map(SteamID::from)
             .map_err(|_| Error::Client("invalid SteamID".to_owned()))
     }
 }

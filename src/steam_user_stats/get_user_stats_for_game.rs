@@ -51,8 +51,8 @@ impl SteamClient {
         let api_key = self
             .api_key
             .as_ref()
-            .ok_or(Error::Client("API key required".to_owned()))?;
-        //.map_err(|_| Error::new(ErrorKind::APIKeyRequired))?;
+            .ok_or_else(|| Error::client("API key required"))?;
+
         let query = format!("key={}&steamid={}&appid={}", api_key, id, game_id);
         let uri = Uri::builder()
             .scheme("https")

@@ -184,9 +184,10 @@ impl SteamClient {
         let api_key = self
             .api_key
             .as_ref()
-            .ok_or(Error::Client("API key required".to_owned()))?;
+            .ok_or_else(|| Error::client("API key required"))?;
+
         if ids.len() > 100 {
-            Err(Error::Client("too many IDs (> 100)".to_owned()))?;
+            return Err(Error::client("too many IDs (> 100)"));
         }
         let id_query = concat_steam_ids(ids);
         let query = format!("key={}&steamids={}", api_key, id_query);

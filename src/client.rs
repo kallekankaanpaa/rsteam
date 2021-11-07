@@ -13,6 +13,12 @@ pub struct SteamClient {
     pub(crate) api_key: Option<String>,
 }
 
+impl Default for SteamClient {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SteamClient {
     /// Create a client with an API key.
     ///

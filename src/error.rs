@@ -9,3 +9,9 @@ pub enum Error {
     #[error("client error: {0}")]
     Client(String),
 }
+
+impl Error {
+    pub(crate) fn client(reason: &str) -> Self {
+        Self::Client(reason.to_owned())
+    }
+}

@@ -48,7 +48,7 @@ impl SteamClient {
         let api_key = self
             .api_key
             .as_ref()
-            .ok_or(Error::Client("API key required".to_owned()))?;
+            .ok_or_else(|| Error::client("API key required"))?;
 
         let q1 = format_query_param(include_app_info, "include_appinfo");
         let q2 = format_query_param(include_played_free_games, "include_played_free_games");
