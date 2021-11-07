@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use crate::client::SteamClient;
 use crate::error::Error;
 use crate::steam_id::SteamID;
@@ -10,64 +8,34 @@ use serde::Deserialize;
 
 const PATH: &str = "/ISteamUser/GetPlayerBans/v1";
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum EconomyBanStatus {
     None,
     Probation,
     Unknown,
 }
 
-impl FromStr for EconomyBanStatus {
-    type Err = Error;
-
-    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        match s {
-            "none" => Ok(EconomyBanStatus::None),
-            "probation" => Ok(EconomyBanStatus::Probation),
-            _ => Ok(EconomyBanStatus::Unknown),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize)]
 pub struct BanData {
+    #[serde(rename = "SteamId")]
     pub id: SteamID,
+    #[serde(rename = "CommunityBanned")]
     pub community_banned: bool,
+    #[serde(rename = "VACBanned")]
     pub vac_banned: bool,
+    #[serde(rename = "NumberOfGameBans")]
     pub number_of_game_bans: u32,
+    #[serde(rename = "NumberOfVACBans")]
     pub number_of_vac_bans: u32,
+    #[serde(rename = "DaysSinceLastBan")]
     pub days_since_last_ban: u32,
+    #[serde(rename = "EconomyBan")]
     pub economy_ban: EconomyBanStatus,
 }
 
-#[allow(non_snake_case)]
-#[derive(Deserialize, Debug)]
-struct RawBanData {
-    SteamId: String,
-    CommunityBanned: bool,
-    VACBanned: bool,
-    NumberOfGameBans: u32,
-    NumberOfVACBans: u32,
-    DaysSinceLastBan: u32,
-    EconomyBan: String,
-}
-
-impl From<RawBanData> for BanData {
-    fn from(rbd: RawBanData) -> Self {
-        BanData {
-            id: rbd.SteamId.parse::<u64>().unwrap().into(),
-            community_banned: rbd.CommunityBanned,
-            vac_banned: rbd.VACBanned,
-            number_of_game_bans: rbd.NumberOfGameBans,
-            number_of_vac_bans: rbd.NumberOfVACBans,
-            days_since_last_ban: rbd.DaysSinceLastBan,
-            economy_ban: rbd.EconomyBan.parse::<EconomyBanStatus>().unwrap(),
-        }
-    }
-}
-
 /// Private Response type to simplify these utility types
-type Response = PlayersWrapper<RawBanData>;
+type Response = PlayersWrapper<BanData>;
 
 impl SteamClient {
     /// Gets vector of [BanData] structs
@@ -93,7 +61,7 @@ impl SteamClient {
         let response = self.client.get(uri).await;
         let body = response?.into_body();
         let players = serde_json::from_slice::<Response>(&to_bytes(body).await?)?.players;
-        Ok(players.into_iter().map(|rbd| rbd.into()).collect())
+        Ok(players)
     }
 }
 

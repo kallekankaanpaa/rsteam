@@ -1,17 +1,17 @@
 use std::fmt;
-use std::str::FromStr;
 
 use crate::client::SteamClient;
 use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{Result, AUTHORITY};
+use crate::utils::{format_query_param, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
 
 const PATH: &str = "/ISteamUser/GetFriendList/v1";
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Relation {
     Friend,
     All,
@@ -27,43 +27,17 @@ impl fmt::Display for Relation {
     }
 }
 
-impl FromStr for Relation {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Self> {
-        match s {
-            "friend" => Ok(Relation::Friend),
-            _ => Ok(Relation::All),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq)]
 pub struct Friend {
+    #[serde(rename = "steamid")]
     pub id: SteamID,
     pub relationship: Relation,
     pub friend_since: u32,
 }
 
-impl From<RawFriend> for Friend {
-    fn from(rf: RawFriend) -> Self {
-        Friend {
-            id: rf.steamid.parse::<u64>().unwrap().into(),
-            relationship: rf.relationship.parse::<Relation>().unwrap(),
-            friend_since: rf.friend_since,
-        }
-    }
-}
-
-#[derive(Deserialize, Debug)]
-struct RawFriend {
-    steamid: String,
-    relationship: String,
-    friend_since: u32,
-}
-
 #[derive(Deserialize)]
 struct FriendsWrapper {
-    friends: Vec<RawFriend>,
+    friends: Vec<Friend>,
 }
 
 #[derive(Deserialize)]
@@ -84,10 +58,7 @@ impl SteamClient {
             .api_key
             .as_ref()
             .ok_or(Error::Client("API key required".to_owned()))?;
-        let relation = match relationship {
-            Some(relation) => format!("&relationship={}", relation.to_string()),
-            None => "".to_owned(),
-        };
+        let relation = format_query_param(relationship, "relationship");
         let query = format!("key={}&steamid={}{}", api_key, id, relation);
         let uri = Uri::builder()
             .scheme("https")
@@ -98,7 +69,7 @@ impl SteamClient {
         let body = response?.into_body();
         let friendlist = serde_json::from_slice::<FriendList>(&to_bytes(body).await?)?.friendslist;
 
-        Ok(friendlist.friends.into_iter().map(|f| f.into()).collect())
+        Ok(friendlist.friends)
     }
 }
 
@@ -113,6 +84,11 @@ mod tests {
         let friends =
             tokio_test::block_on(client.get_friend_list(SteamID::from(76561198061271782), None))
                 .unwrap();
+
+        for f in &friends {
+            println!("{:?}", f);
+        }
+
         assert!(!friends.is_empty());
     }
 }

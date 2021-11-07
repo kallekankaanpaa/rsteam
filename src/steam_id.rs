@@ -1,7 +1,10 @@
+use crate::error::Error;
 use std::convert::TryFrom;
 use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
+
+use serde::Deserialize;
 
 #[derive(Debug)]
 pub struct SteamError;
@@ -13,7 +16,8 @@ impl From<ParseIntError> for SteamError {
 }
 
 /// Struct to represent steam ids.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Deserialize)]
+#[serde(try_from = "String")]
 pub struct SteamID {
     universe: u8,
     account_type: u8,
@@ -47,6 +51,15 @@ impl From<u64> for SteamID {
             account_type,
             account_id,
         }
+    }
+}
+
+impl TryFrom<String> for SteamID {
+    type Error = Error;
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        s.parse::<u64>()
+            .map(|id| SteamID::from(id))
+            .map_err(|_| Error::Client("invalid SteamID".to_owned()))
     }
 }
 

@@ -3,14 +3,18 @@ use std::net::Ipv4Addr;
 use crate::client::SteamClient;
 use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{concat_steam_ids, PlayersWrapper, ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{
+    bool_from_int_maybe_missing, concat_steam_ids, PlayersWrapper, ResponseWrapper, Result,
+    AUTHORITY,
+};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
 
 const PATH: &str = "/ISteamUser/GetPlayerSummaries/v0002/";
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
+#[serde(from = "u32")]
 pub enum Visibility {
     Private = 1,
     FriendsOnly = 2,
@@ -19,8 +23,8 @@ pub enum Visibility {
     Public = 5,
 }
 
-impl From<u8> for Visibility {
-    fn from(v: u8) -> Self {
+impl From<u32> for Visibility {
+    fn from(v: u32) -> Self {
         match v {
             1 => Visibility::Private,
             2 => Visibility::FriendsOnly,
@@ -32,7 +36,8 @@ impl From<u8> for Visibility {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
+#[serde(from = "u32")]
 pub enum Status {
     Offline = 0,
     Online = 1,
@@ -43,8 +48,8 @@ pub enum Status {
     LookingToPlay = 6,
 }
 
-impl From<u8> for Status {
-    fn from(status: u8) -> Self {
+impl From<u32> for Status {
+    fn from(status: u32) -> Self {
         match status {
             0 => Status::Offline,
             1 => Status::Online,
@@ -58,15 +63,21 @@ impl From<u8> for Status {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub struct Summary {
+    #[serde(rename = "steamid")]
     pub id: SteamID,
+    #[serde(rename = "communityvisibilitystate")]
     pub visibility: Visibility,
     /// Profile state, 1 means user has configured the profile
+    #[serde(rename = "profilestate")]
     pub profile_state: u8,
+    #[serde(rename = "personaname")]
     pub profile_name: String,
     /// Unix timestamp of users last logoff
+    #[serde(rename = "lastlogoff")]
     pub last_logoff: u64,
+    #[serde(rename = "profileurl")]
     pub profile_url: String,
     /// 32x32 pixel image
     pub avatar: String,
@@ -74,16 +85,27 @@ pub struct Summary {
     pub avatarmedium: String,
     /// 184x184 pixel image
     pub avatarfull: String,
+    #[serde(rename = "personastate")]
     pub status: Status,
+    #[serde(default)]
+    #[serde(rename = "commentpermission")]
+    #[serde(deserialize_with = "bool_from_int_maybe_missing")]
     pub comment_permission: Option<bool>,
+    #[serde(rename = "realname")]
     pub real_name: Option<String>,
     pub primaryclanid: Option<SteamID>,
     /// Unix timestamp of users creation
+    #[serde(rename = "timecreated")]
     pub time_created: Option<u64>,
+    #[serde(rename = "loccountrycode")]
     pub country_code: Option<String>,
+    #[serde(rename = "loccityid")]
     pub city_id: Option<u64>,
+    #[serde(rename = "gameid")]
     pub game_id: Option<String>,
+    #[serde(rename = "gameextrainfo")]
     pub game_info: Option<String>,
+    #[serde(rename = "gameserveerip")]
     pub gameserver_ip: Option<Ipv4Addr>,
 }
 
@@ -110,6 +132,7 @@ struct RawSummary {
     gameserverip: Option<String>,
 }
 
+/*
 impl From<RawSummary> for Summary {
     fn from(rs: RawSummary) -> Self {
         Summary {
@@ -144,10 +167,10 @@ impl From<RawSummary> for Summary {
                 .flatten(),
         }
     }
-}
+} */
 
 /// Private Response type to simplify these utility types
-type Response = ResponseWrapper<PlayersWrapper<RawSummary>>;
+type Response = ResponseWrapper<PlayersWrapper<Summary>>;
 
 impl SteamClient {
     /// Gets vector of player/account [Summaries](Summary).
@@ -177,7 +200,7 @@ impl SteamClient {
         let body = response?.into_body();
         let resp = serde_json::from_slice::<Response>(&to_bytes(body).await?)?.response;
 
-        Ok(resp.players.into_iter().map(|rs| rs.into()).collect())
+        Ok(resp.players)
     }
 }
 
@@ -193,6 +216,7 @@ mod tests {
             client.get_player_summaries(vec![SteamID::from(76561198061271782)]),
         )
         .unwrap();
+        println!("{:?}", summary);
         assert!(summary.len() == 1);
     }
 
