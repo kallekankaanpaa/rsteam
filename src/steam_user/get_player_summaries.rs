@@ -109,29 +109,6 @@ pub struct Summary {
     pub gameserver_ip: Option<Ipv4Addr>,
 }
 
-#[derive(Deserialize, Debug)]
-struct RawSummary {
-    steamid: String,
-    communityvisibilitystate: u8,
-    profilestate: u8,
-    personaname: String,
-    lastlogoff: u64,
-    profileurl: String,
-    avatar: String,
-    avatarmedium: String,
-    avatarfull: String,
-    personastate: u8,
-    commentpermission: Option<u8>,
-    realname: Option<String>,
-    primaryclanid: Option<String>,
-    timecreated: Option<u64>,
-    loccountrycode: Option<String>,
-    loccityid: Option<u64>,
-    gameid: Option<String>,
-    gameextrainfo: Option<String>,
-    gameserverip: Option<String>,
-}
-
 /// Private Response type to simplify these utility types
 type Response = ResponseWrapper<PlayersWrapper<Summary>>;
 
