@@ -132,43 +132,6 @@ struct RawSummary {
     gameserverip: Option<String>,
 }
 
-/*
-impl From<RawSummary> for Summary {
-    fn from(rs: RawSummary) -> Self {
-        Summary {
-            id: rs.steamid.parse::<u64>().unwrap().into(),
-            visibility: rs.communityvisibilitystate.into(),
-            profile_state: rs.profilestate,
-            profile_name: rs.personaname,
-            last_logoff: rs.lastlogoff,
-            profile_url: rs.profileurl,
-            avatar: rs.avatar,
-            avatarmedium: rs.avatarmedium,
-            avatarfull: rs.avatarfull,
-            status: rs.personastate.into(),
-            comment_permission: rs.commentpermission.map(|p| match p {
-                1 => true,
-                _ => false,
-            }),
-            real_name: rs.realname,
-            primaryclanid: rs
-                .primaryclanid
-                .map(|id| id.parse::<u64>().ok())
-                .flatten()
-                .map(|id| id.into()),
-            time_created: rs.timecreated,
-            country_code: rs.loccountrycode,
-            city_id: rs.loccityid,
-            game_id: rs.gameid,
-            game_info: rs.gameextrainfo,
-            gameserver_ip: rs
-                .gameserverip
-                .map(|ip| ip.parse::<Ipv4Addr>().ok())
-                .flatten(),
-        }
-    }
-} */
-
 /// Private Response type to simplify these utility types
 type Response = ResponseWrapper<PlayersWrapper<Summary>>;
 
