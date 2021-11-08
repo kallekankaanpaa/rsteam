@@ -27,3 +27,7 @@ Currently supported interfaces:
     - GetRecentlyPlayedGames
     - GetSteamLevel
     - IsPlayingSharedGame
+- ISteamApps
+    - GetAppList
+- ISteamNews
+    - GetNewsForApp
