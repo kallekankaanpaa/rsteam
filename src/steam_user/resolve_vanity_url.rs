@@ -1,7 +1,7 @@
 use crate::client::SteamClient;
 use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{format_query_param, ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{ResponseWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -45,7 +45,7 @@ impl SteamClient {
             .as_ref()
             .ok_or_else(|| Error::client("API key required"))?;
 
-        let type_query = format_query_param(url_type, "url_type");
+        let type_query = optional_query!(url_type);
         let query = format!("key={}&vanityurl={}{}", api_key, vanity_url, type_query);
         let uri = Uri::builder()
             .scheme("https")

@@ -7,8 +7,12 @@
 
 mod client;
 pub mod error;
+#[macro_use]
+mod macros;
 pub mod player_service;
+pub mod steam_apps;
 mod steam_id;
+pub mod steam_news;
 pub mod steam_user;
 pub mod steam_user_stats;
 mod utils;

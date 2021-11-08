@@ -3,7 +3,7 @@ use std::fmt;
 use crate::client::SteamClient;
 use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{format_query_param, Result, AUTHORITY};
+use crate::utils::{Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -59,7 +59,7 @@ impl SteamClient {
             .as_ref()
             .ok_or_else(|| Error::client("API key required"))?;
 
-        let relation = format_query_param(relationship, "relationship");
+        let relation = optional_query!(relationship);
         let query = format!("key={}&steamid={}{}", api_key, id, relation);
         let uri = Uri::builder()
             .scheme("https")

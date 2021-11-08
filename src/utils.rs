@@ -23,6 +23,7 @@ pub(crate) fn concat_steam_ids(ids: Vec<SteamID>) -> String {
         .fold("".to_owned(), |a, b| a + &b + ",")
 }
 
+/*
 pub(crate) fn format_query_param<T: std::fmt::Display>(
     optional_param: Option<T>,
     param_name: &str,
@@ -30,7 +31,7 @@ pub(crate) fn format_query_param<T: std::fmt::Display>(
     optional_param
         .map(|p| format!("&{}={}", param_name, p))
         .unwrap_or_else(String::new)
-}
+} */
 
 pub(crate) fn bool_from_int_maybe_missing<'de, D>(
     deserializer: D,
@@ -48,5 +49,19 @@ where
             )),
         },
         Err(_) => Ok(None),
+    }
+}
+
+pub(crate) fn u64_from_str<'de, D>(deserializer: D) -> StdResult<u64, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = String::deserialize(deserializer)?;
+    match value.parse::<u64>() {
+        Ok(integer) => Ok(integer),
+        Err(_) => Err(de::Error::invalid_value(
+            Unexpected::Str(&value),
+            &"u64 in a string",
+        )),
     }
 }
