@@ -75,7 +75,7 @@ pub struct Summary {
     pub profile_name: String,
     /// Unix timestamp of users last logoff
     #[serde(rename = "lastlogoff")]
-    pub last_logoff: u64,
+    pub last_logoff: u32,
     #[serde(rename = "profileurl")]
     pub profile_url: String,
     /// 32x32 pixel image
@@ -95,11 +95,11 @@ pub struct Summary {
     pub primaryclanid: Option<SteamID>,
     /// Unix timestamp of users creation
     #[serde(rename = "timecreated")]
-    pub time_created: Option<u64>,
+    pub time_created: Option<u32>,
     #[serde(rename = "loccountrycode")]
     pub country_code: Option<String>,
     #[serde(rename = "loccityid")]
-    pub city_id: Option<u64>,
+    pub city_id: Option<u32>,
     #[serde(rename = "gameid")]
     pub game_id: Option<String>,
     #[serde(rename = "gameextrainfo")]

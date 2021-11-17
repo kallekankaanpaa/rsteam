@@ -2,8 +2,11 @@ use std::cmp;
 use std::env;
 
 use rsteam::steam_id::{SteamID2, SteamID3};
-use rsteam::steam_user::BanData;
+use rsteam::steam_user::{BanData, Status};
 use rsteam::{SteamClient, SteamID};
+
+use chrono::prelude::*;
+use chrono::NaiveDateTime;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -99,16 +102,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         cmp::max(three_recent_games.total_count, 3) - 3,
     );
 
-    println!(
-        "{}, {}, {:?}, {:?}",
-        summary.last_logoff,
-        summary
-            .time_created
-            .map(|t| t.to_string())
-            .unwrap_or("unknown".to_owned()),
-        summary.status,
-        summary.visibility
-    );
+    let logoff = NaiveDateTime::from_timestamp(summary.last_logoff as i64, 0);
+    let current = Utc::now().naive_utc();
+    match summary.status {
+        Status::Offline => println!(
+            "User was last online {} days ago",
+            current.signed_duration_since(logoff).num_days()
+        ),
+        _ => println!("User is currently {:?}", summary.status),
+    }
+
+    match summary.time_created {
+        Some(secs) => {
+            let created = NaiveDateTime::from_timestamp(secs as i64, 0).date();
+            println!("Account created {}", created.format("%d.%m.%Y"))
+        }
+        None => println!("Unknown account age"),
+    }
+    println!("Profile visibility: {:?}", summary.visibility);
 
     Ok(())
 }
