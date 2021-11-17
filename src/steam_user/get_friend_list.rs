@@ -42,7 +42,7 @@ struct FriendsWrapper {
 
 #[derive(Deserialize)]
 struct FriendList {
-    friendslist: FriendsWrapper,
+    friendslist: Option<FriendsWrapper>,
 }
 
 impl SteamClient {
@@ -70,7 +70,7 @@ impl SteamClient {
         let body = response?.into_body();
         let friendlist = serde_json::from_slice::<FriendList>(&to_bytes(body).await?)?.friendslist;
 
-        Ok(friendlist.friends)
+        Ok(friendlist.map(|fl| fl.friends).unwrap_or(vec![]))
     }
 }
 

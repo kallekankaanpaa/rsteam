@@ -1,3 +1,4 @@
+use std::cmp;
 use std::env;
 
 use rsteam::steam_id::{SteamID2, SteamID3};
@@ -71,7 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "User belongs to {} groups and their primary group is {}",
         group_list.len(),
         match &summary.primaryclanid {
-            Some(id) => id.to_string(),
+            Some(id) => client.get_group_summary(id).await?.details.name,
             None => "User has no primary group".to_owned(),
         }
     );
@@ -85,7 +86,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "User has {} friends, {:.1}% of who are banned",
         friend_list.len(),
-        banned_friends.len() as f32 / friend_list.len() as f32 * 100_f32
+        banned_friends.len() as f32 / cmp::max(friend_list.len(), 1) as f32 * 100_f32
     );
     let recent_3: Vec<String> = three_recent_games
         .games
@@ -95,7 +96,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "The user has played, {} and {} other games recently",
         recent_3.join(", "),
-        three_recent_games.total_count - 3,
+        cmp::max(three_recent_games.total_count, 3) - 3,
     );
 
     println!(
