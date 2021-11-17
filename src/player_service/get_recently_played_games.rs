@@ -39,7 +39,7 @@ impl SteamClient {
     /// count parameter. By default there is no limit.
     pub async fn get_recently_played_games(
         &self,
-        id: SteamID,
+        id: &SteamID,
         count: Option<u32>,
     ) -> Result<RecentlyPlayedGames> {
         let api_key = self
@@ -74,7 +74,7 @@ mod tests {
     fn asfd() {
         let client = SteamClient::new();
         let id = SteamID::from(76561198061271782);
-        let recent = block_on(client.get_recently_played_games(id, None));
+        let recent = block_on(client.get_recently_played_games(&id, None));
         assert_err!(recent);
     }
 }

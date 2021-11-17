@@ -1,5 +1,4 @@
 use crate::error::Error;
-use crate::SteamID;
 use serde::{de, de::Unexpected, Deserialize, Deserializer};
 use std::result::Result as StdResult;
 
@@ -16,22 +15,6 @@ pub(crate) struct ResponseWrapper<R> {
 pub(crate) struct PlayersWrapper<P> {
     pub(crate) players: Vec<P>,
 }
-
-pub(crate) fn concat_steam_ids(ids: Vec<SteamID>) -> String {
-    ids.iter()
-        .map(|id| id.to_string())
-        .fold("".to_owned(), |a, b| a + &b + ",")
-}
-
-/*
-pub(crate) fn format_query_param<T: std::fmt::Display>(
-    optional_param: Option<T>,
-    param_name: &str,
-) -> String {
-    optional_param
-        .map(|p| format!("&{}={}", param_name, p))
-        .unwrap_or_else(String::new)
-} */
 
 pub(crate) fn bool_from_int_maybe_missing<'de, D>(
     deserializer: D,

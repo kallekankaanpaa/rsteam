@@ -33,7 +33,7 @@ type Response = ResponseWrapper<Badges>;
 
 impl SteamClient {
     /// Returns all badges user has and info about level
-    pub async fn get_badges(&self, id: SteamID) -> Result<Badges> {
+    pub async fn get_badges(&self, id: &SteamID) -> Result<Badges> {
         let api_key = self
             .api_key
             .as_ref()
@@ -64,7 +64,7 @@ mod tests {
     fn badges() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
-        let badges = block_on(client.get_badges(id)).unwrap();
+        let badges = block_on(client.get_badges(&id)).unwrap();
         assert_eq!(badges.badges.len(), 19)
     }
 }

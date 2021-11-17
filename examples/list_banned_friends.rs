@@ -27,12 +27,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .resolve_vanity_url(&vanity_url, Some(URLType::Individual))
         .await?;
 
-    let friends = client.get_friend_list(id, None).await?;
+    let friends = client.get_friend_list(&id, None).await?;
 
     let ids: Vec<SteamID> = friends.into_iter().map(|friend| friend.id).collect();
 
     let banned_friends: Vec<BanData> = client
-        .get_player_bans(ids)
+        .get_player_bans(&ids)
         .await?
         .into_iter()
         .filter(|ban| ban.community_banned || ban.vac_banned)

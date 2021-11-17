@@ -16,7 +16,7 @@ impl From<ParseIntError> for SteamError {
 }
 
 /// Struct to represent steam ids.
-#[derive(Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(try_from = "String")]
 pub struct SteamID {
     universe: u8,
@@ -77,7 +77,7 @@ impl From<SteamID3> for SteamID {
 }
 
 #[derive(PartialEq, Debug)]
-struct SteamID2(SteamID);
+pub struct SteamID2(SteamID);
 
 impl fmt::Display for SteamID2 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -124,7 +124,7 @@ impl FromStr for SteamID2 {
 }
 
 #[derive(PartialEq, Debug)]
-struct SteamID3(SteamID);
+pub struct SteamID3(SteamID);
 
 impl fmt::Display for SteamID3 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

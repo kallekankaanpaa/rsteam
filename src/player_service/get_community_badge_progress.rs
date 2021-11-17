@@ -23,7 +23,7 @@ type Response = ResponseWrapper<Quests>;
 
 impl SteamClient {
     /// Resturns the current community badge process for user
-    pub async fn get_community_badge_progress(&self, id: SteamID) -> Result<Vec<Quest>> {
+    pub async fn get_community_badge_progress(&self, id: &SteamID) -> Result<Vec<Quest>> {
         let api_key = self
             .api_key
             .as_ref()
@@ -54,7 +54,7 @@ mod tests {
     fn badges() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
-        let quests = block_on(client.get_community_badge_progress(id)).unwrap();
+        let quests = block_on(client.get_community_badge_progress(&id)).unwrap();
         assert_eq!(quests.len(), 28)
     }
 }

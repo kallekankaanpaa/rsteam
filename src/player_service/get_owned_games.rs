@@ -38,7 +38,7 @@ impl SteamClient {
     /// All optional parameters are `false` by default
     pub async fn get_owned_games(
         &self,
-        id: SteamID,
+        id: &SteamID,
         // appid_filter: Option<u32>, in API documentation but no couldn't find any way to use
         include_app_info: Option<bool>,          // default false
         include_played_free_games: Option<bool>, // default false
@@ -80,7 +80,7 @@ mod tests {
     fn asfd() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
-        let owned_games = block_on(client.get_owned_games(id, None, None, None, None)).unwrap();
+        let owned_games = block_on(client.get_owned_games(&id, None, None, None, None)).unwrap();
         assert_eq!(owned_games.game_count, 70);
     }
 }

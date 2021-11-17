@@ -27,7 +27,7 @@ impl SteamClient {
     /// Fetches vector of [SteamIDs](SteamID) which represent the ids for the users groups
     ///
     /// Requires an API key.
-    pub async fn get_user_group_list(&self, id: SteamID) -> Result<Vec<SteamID>> {
+    pub async fn get_user_group_list(&self, id: &SteamID) -> Result<Vec<SteamID>> {
         let api_key = self
             .api_key
             .as_ref()
@@ -67,7 +67,7 @@ mod tests {
     fn fetches_list_of_ids() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let groups =
-            tokio_test::block_on(client.get_user_group_list(SteamID::from(76561198061271782)))
+            tokio_test::block_on(client.get_user_group_list(&SteamID::from(76561198061271782)))
                 .unwrap();
         assert!(!groups.is_empty());
     }

@@ -1,7 +1,7 @@
 use crate::client::SteamClient;
 use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{concat_steam_ids, PlayersWrapper, Result, AUTHORITY};
+use crate::utils::{PlayersWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -45,13 +45,17 @@ impl SteamClient {
     /// don't assume the returned [BanDatas](BanData) are in the same order as
     /// the [SteamIDs](SteamID). Always check the [SteamID] from the [BanData]
     /// struct
-    pub async fn get_player_bans(&self, ids: Vec<SteamID>) -> Result<Vec<BanData>> {
+    pub async fn get_player_bans(&self, ids: &Vec<SteamID>) -> Result<Vec<BanData>> {
         let api_key = self
             .api_key
             .as_ref()
             .ok_or_else(|| Error::client("API key required"))?;
 
-        let id_query = concat_steam_ids(ids);
+        let id_query = ids
+            .iter()
+            .map(|id| id.to_string())
+            .collect::<Vec<String>>()
+            .join(",");
         let query = format!("key={}&steamids={}", api_key, id_query);
         let uri = Uri::builder()
             .scheme("https")
@@ -75,7 +79,7 @@ mod tests {
     fn works() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let ban_data =
-            tokio_test::block_on(client.get_player_bans(vec![SteamID::from(76561198061271782)]))
+            tokio_test::block_on(client.get_player_bans(&vec![SteamID::from(76561198061271782)]))
                 .unwrap();
         assert_eq!(
             ban_data,

@@ -45,7 +45,7 @@ impl SteamClient {
     /// Requires an API key.
     pub async fn get_user_stats_for_game(
         &self,
-        id: SteamID,
+        id: &SteamID,
         game_id: NonZeroU32,
     ) -> Result<PlayerStats> {
         let api_key = self
@@ -79,7 +79,7 @@ mod tests {
         let id = SteamID::from(76561198061271782);
         let game_id = NonZeroU32::new(730).unwrap();
         let player_stats =
-            tokio_test::block_on(client.get_user_stats_for_game(id, game_id)).unwrap();
+            tokio_test::block_on(client.get_user_stats_for_game(&id, game_id)).unwrap();
 
         for stat in &player_stats.stats {
             println!("{:?}", stat)

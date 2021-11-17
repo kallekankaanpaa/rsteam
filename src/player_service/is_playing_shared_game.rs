@@ -17,7 +17,11 @@ type Response = ResponseWrapper<Lender>;
 
 impl SteamClient {
     /// Returns the lenders steamid if user is playing shared game
-    pub async fn is_playing_shared_game(&self, id: SteamID, appid: u32) -> Result<Option<SteamID>> {
+    pub async fn is_playing_shared_game(
+        &self,
+        id: &SteamID,
+        appid: u32,
+    ) -> Result<Option<SteamID>> {
         let api_key = self
             .api_key
             .as_ref()
@@ -61,7 +65,7 @@ mod tests {
     fn badges() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
-        let lender = block_on(client.is_playing_shared_game(id, 730)).unwrap();
+        let lender = block_on(client.is_playing_shared_game(&id, 730)).unwrap();
         assert_eq!(lender, None)
     }
 }

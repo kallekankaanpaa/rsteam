@@ -18,7 +18,7 @@ type Response = ResponseWrapper<Level>;
 
 impl SteamClient {
     /// Returns users steam level
-    pub async fn get_steam_level(&self, id: SteamID) -> Result<u32> {
+    pub async fn get_steam_level(&self, id: &SteamID) -> Result<u32> {
         let api_key = self
             .api_key
             .as_ref()
@@ -50,7 +50,7 @@ mod tests {
     fn get_level() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
-        let level = block_on(client.get_steam_level(id)).unwrap();
+        let level = block_on(client.get_steam_level(&id)).unwrap();
         assert_eq!(level, 36);
     }
 }

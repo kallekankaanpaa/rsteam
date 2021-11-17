@@ -51,7 +51,7 @@ impl SteamClient {
     /// Requires an API key.
     pub async fn get_friend_list(
         &self,
-        id: SteamID,
+        id: &SteamID,
         relationship: Option<Relation>,
     ) -> Result<Vec<Friend>> {
         let api_key = self
@@ -83,7 +83,7 @@ mod tests {
     fn works() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let friends =
-            tokio_test::block_on(client.get_friend_list(SteamID::from(76561198061271782), None))
+            tokio_test::block_on(client.get_friend_list(&SteamID::from(76561198061271782), None))
                 .unwrap();
 
         for f in &friends {
