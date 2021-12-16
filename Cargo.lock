@@ -547,7 +547,7 @@ dependencies = [
 
 [[package]]
 name = "rsteam"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "chrono",
  "futures",

@@ -31,3 +31,5 @@ Currently supported interfaces:
     - GetAppList
 - ISteamNews
     - GetNewsForApp
+- Legacy
+    - Legacy "interface" includes methods to fetch group info
