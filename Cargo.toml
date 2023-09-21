@@ -22,7 +22,6 @@ futures = "0.3.17"
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
 tokio-test = "0.4.2"
-chrono = "0.4.19"
 
 [profile.bench]
 debug = true

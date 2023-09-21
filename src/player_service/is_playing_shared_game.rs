@@ -10,7 +10,7 @@ const PATH: &str = "/IPlayerService/IsPlayingSharedGame/v0001/";
 
 #[derive(Deserialize)]
 struct Lender {
-    lender_steamid: String,
+    lender_steamid: Option<String>,
 }
 
 type Response = ResponseWrapper<Lender>;
@@ -40,9 +40,9 @@ impl SteamClient {
 
         let Lender { lender_steamid } = response.response;
 
-        if lender_steamid != "0" {
+        if let Some(steamid) = lender_steamid {
             Ok(Some(
-                lender_steamid
+                steamid
                     .parse::<u64>()
                     .map_err(|_| {
                         Error::Client("request succeeded but lenders steamid is invalid".to_owned())

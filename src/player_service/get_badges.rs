@@ -65,6 +65,6 @@ mod tests {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
         let badges = block_on(client.get_badges(&id)).unwrap();
-        assert_eq!(badges.badges.len(), 19)
+        assert_eq!(badges.badges.len(), 22)
     }
 }

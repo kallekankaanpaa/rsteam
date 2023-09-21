@@ -77,10 +77,10 @@ mod tests {
     use tokio_test::block_on;
 
     #[test]
-    fn asfd() {
+    fn owned_games() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
         let owned_games = block_on(client.get_owned_games(&id, None, None, None, None)).unwrap();
-        assert_eq!(owned_games.game_count, 70);
+        assert_eq!(owned_games.game_count, 73);
     }
 }

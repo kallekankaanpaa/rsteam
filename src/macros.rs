@@ -1,6 +1,7 @@
 /// Formats variables to query params
 ///
 /// If no name is provided variable name is used as params name
+#[allow(unused_macros)]
 macro_rules! query {
     ($value:ident) => {
         format!("&{}={}", stringify!($value), $value)

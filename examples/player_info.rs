@@ -1,12 +1,10 @@
 use std::cmp;
 use std::env;
+use std::time;
 
 use rsteam::steam_id::{SteamID2, SteamID3};
 use rsteam::steam_user::{BanData, Status};
 use rsteam::{SteamClient, SteamID};
-
-use chrono::prelude::*;
-use chrono::NaiveDateTime;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -102,20 +100,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         cmp::max(three_recent_games.total_count, 3) - 3,
     );
 
-    let logoff = NaiveDateTime::from_timestamp(summary.last_logoff as i64, 0);
-    let current = Utc::now().naive_utc();
+    let online_secs = time::SystemTime::now().duration_since(time::UNIX_EPOCH).expect("Something funny happened").as_secs() - summary.last_logoff as u64;
     match summary.status {
         Status::Offline => println!(
             "User was last online {} days ago",
-            current.signed_duration_since(logoff).num_days()
+            (online_secs / 60 / 60 / 24)
         ),
         _ => println!("User is currently {:?}", summary.status),
     }
 
     match summary.time_created {
         Some(secs) => {
-            let created = NaiveDateTime::from_timestamp(secs as i64, 0).date();
-            println!("Account created {}", created.format("%d.%m.%Y"))
+            let created_secs = time::SystemTime::now().duration_since(time::UNIX_EPOCH).expect("Something funny happened").as_secs() - secs as u64;
+            println!("Account created {} days ago", (created_secs / 60 / 60 / 24))
         }
         None => println!("Unknown account age"),
     }

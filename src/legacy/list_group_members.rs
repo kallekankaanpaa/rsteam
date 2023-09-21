@@ -22,7 +22,7 @@ struct Members {
 #[derive(Deserialize, Debug)]
 struct Group {
     #[serde(rename = "nextPageLink")]
-    next_page_url: Option<String>,
+    _next_page_url: Option<String>,
     #[serde(rename = "memberCount")]
     member_count: u32,
     #[serde(rename = "totalPages")]

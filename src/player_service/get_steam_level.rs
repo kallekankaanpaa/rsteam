@@ -51,6 +51,6 @@ mod tests {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
         let level = block_on(client.get_steam_level(&id)).unwrap();
-        assert_eq!(level, 36);
+        assert_eq!(level, 37);
     }
 }
