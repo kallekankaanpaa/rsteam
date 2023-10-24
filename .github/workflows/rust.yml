@@ -22,4 +22,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Test
+      env:
+        STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
       run: cargo test --verbose
