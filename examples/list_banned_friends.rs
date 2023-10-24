@@ -38,10 +38,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .filter(|ban| ban.community_banned || ban.vac_banned)
         .collect();
 
-    for ban in banned_friends {
+    let summaries = client.get_player_summaries(&banned_friends.iter().map(|b| b.id).collect::<Vec<SteamID>>()).await?;
+
+    for (ban, summary) in banned_friends.iter().zip(summaries.iter()) {
         println!(
             "{}, game bans: {}, vac bans: {}, since last: {}",
-            ban.id, ban.number_of_game_bans, ban.number_of_vac_bans, ban.days_since_last_ban
+            summary.profile_name, ban.number_of_game_bans, ban.number_of_vac_bans, ban.days_since_last_ban
         );
     }
 

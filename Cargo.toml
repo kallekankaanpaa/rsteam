@@ -1,6 +1,6 @@
 [package]
 name = "rsteam"
-version = "0.1.4"
+version = "0.2.0"
 edition = "2021"
 authors = ["Kalle Kankaanpää <kalle.kankaanpaa@protonmail.com>"]
 description = "rsteam is a easy to use async wrapper for the steam web api"
@@ -11,17 +11,18 @@ repository = "https://github.com/KnoxZZ/rsteam"
 documentation = "https://docs.rs/rsteam"
 
 [dependencies]
-hyper = { version = "0.14.14", features = ["client", "http2"] }
-hyper-rustls = { version = "0.22.1" }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-serde-xml-rs = "0.5.1"
-thiserror = "1.0"
-futures = "0.3.17"
+hyper = { version = "0.14", features = ["client", "http2"] }
+hyper-rustls = { version = "0.24", features = ["rustls-native-certs", "http2"] }
+serde = { version = "1.0.103", features = ["derive"] }
+serde_json = "1"
+serde-xml-rs = "0.6"
+serde-aux = "4"
+thiserror = "1.0.2"
+futures = "0.3"
 
 [dev-dependencies]
-tokio = { version = "1", features = ["full"] }
-tokio-test = "0.4.2"
+tokio = { version = "1.19", features = ["full"] }
+tokio-test = "0.4"
 
 [profile.bench]
 debug = true

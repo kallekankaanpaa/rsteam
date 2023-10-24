@@ -1,5 +1,5 @@
 use crate::error::Error;
-use crate::utils::{ResponseWrapper, Result, AUTHORITY};
+use crate::utils::{ResponseMaybeEmpty, Result, AUTHORITY};
 use crate::{SteamClient, SteamID};
 use serde::Deserialize;
 use serde_json::from_slice;
@@ -18,7 +18,6 @@ pub struct Game {
     pub playtime_2weeks: u32,
     pub playtime_forever: u32,
     pub img_icon_url: String,
-    pub img_logo_url: String,
     pub playtime_windows_forever: u32,
     pub playtime_mac_forever: u32,
     pub playtime_linux_forever: u32,
@@ -30,7 +29,7 @@ pub struct RecentlyPlayedGames {
     pub games: Vec<Game>,
 }
 
-type Response = ResponseWrapper<RecentlyPlayedGames>;
+type Response = ResponseMaybeEmpty<RecentlyPlayedGames>;
 
 impl SteamClient {
     /// Returns info about users recently played games.
@@ -41,7 +40,7 @@ impl SteamClient {
         &self,
         id: &SteamID,
         count: Option<u32>,
-    ) -> Result<RecentlyPlayedGames> {
+    ) -> Result<Option<RecentlyPlayedGames>> {
         let api_key = self
             .api_key
             .as_ref()
@@ -67,14 +66,24 @@ impl SteamClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    //use std::env;
-    use tokio_test::{assert_err, block_on};
+    use std::env;
+    use tokio_test::{block_on, assert_ok};
 
     #[test]
-    fn asfd() {
-        let client = SteamClient::new();
+    fn public_profile() {
+        let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
         let recent = block_on(client.get_recently_played_games(&id, None));
-        assert_err!(recent);
+        println!("{:?}", recent);
+        assert_ok!(recent);
+    }
+
+    #[test]
+    fn private_profile() {
+        let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
+        let id = SteamID::from(76561198312831106);
+        let recent = block_on(client.get_recently_played_games(&id, None));
+        println!("{:?}", recent);
+        assert_ok!(recent);
     }
 }

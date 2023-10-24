@@ -4,7 +4,7 @@ use crate::client::SteamClient;
 use crate::error::Error;
 use crate::steam_id::SteamID;
 use crate::utils::{
-    bool_from_int_maybe_missing, PlayersWrapper, ResponseWrapper, Result, AUTHORITY,
+    PlayersWrapper, ResponseWrapper, Result, AUTHORITY,
 };
 use hyper::body::to_bytes;
 use hyper::Uri;
@@ -14,22 +14,41 @@ const PATH: &str = "/ISteamUser/GetPlayerSummaries/v0002/";
 
 #[derive(Debug, Deserialize)]
 #[serde(from = "u32")]
+pub enum CommentPermission {
+    FriendsOnly = 0,
+    Public = 1,
+    Private = 2,
+}
+
+impl From<u32> for CommentPermission {
+    fn from(c: u32) -> Self {
+        match c {
+            0 => CommentPermission::FriendsOnly,
+            1 => CommentPermission::Public,
+            2 => CommentPermission::Private,
+            _ => CommentPermission::FriendsOnly,
+        }
+    }
+}
+
+impl Default for CommentPermission {
+    fn default() -> Self {
+        CommentPermission::FriendsOnly
+    }
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(from = "u32")]
 pub enum Visibility {
     Private = 1,
-    FriendsOnly = 2,
-    FriendsOfFriends = 3,
-    UsersOnly = 4,
-    Public = 5,
+    Visible = 3,
 }
 
 impl From<u32> for Visibility {
     fn from(v: u32) -> Self {
         match v {
             1 => Visibility::Private,
-            2 => Visibility::FriendsOnly,
-            3 => Visibility::FriendsOfFriends,
-            4 => Visibility::UsersOnly,
-            5 => Visibility::Public,
+            3 => Visibility::Visible,
             _ => Visibility::Private,
         }
     }
@@ -63,36 +82,60 @@ impl From<u32> for Status {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(from = "u32")]
+pub enum ProfileState {
+    Unconfigured = 0,
+    Configured = 1,
+}
+
+impl From<u32> for ProfileState {
+    fn from(value: u32) -> Self {
+        match value {
+            0 => ProfileState::Unconfigured,
+            1 => ProfileState::Configured,
+            _ => ProfileState::Unconfigured,
+        }
+    }
+}
+
+#[derive(Debug, Deserialize)]
 pub struct Summary {
+    /// Steam ID of the user
     #[serde(rename = "steamid")]
     pub id: SteamID,
+    /// Visibility of the profile
+    /// 
+    /// Visibility is determined from the viewpoint of the API key owner. 
     #[serde(rename = "communityvisibilitystate")]
     pub visibility: Visibility,
-    /// Profile state, 1 means user has configured the profile
     #[serde(rename = "profilestate")]
-    pub profile_state: u8,
+    pub profile_state: ProfileState, 
     #[serde(rename = "personaname")]
     pub profile_name: String,
     /// Unix timestamp of users last logoff
+    /// 
+    /// Only available for Steam users that are friends of the user whose API key is used
     #[serde(rename = "lastlogoff")]
-    pub last_logoff: u32,
+    pub last_logoff: Option<u32>,
     #[serde(rename = "profileurl")]
     pub profile_url: String,
     /// 32x32 pixel image
     pub avatar: String,
     /// 64x64 pixel image
-    pub avatarmedium: String,
+    #[serde(rename = "avatarmedium")]
+    pub avatar_medium: String,
     /// 184x184 pixel image
-    pub avatarfull: String,
+    #[serde(rename = "avatarfull")]
+    pub avatar_full: String,
     #[serde(rename = "personastate")]
     pub status: Status,
     #[serde(default)]
     #[serde(rename = "commentpermission")]
-    #[serde(deserialize_with = "bool_from_int_maybe_missing")]
-    pub comment_permission: Option<bool>,
+    pub comment_permission: CommentPermission,
     #[serde(rename = "realname")]
     pub real_name: Option<String>,
-    pub primaryclanid: Option<SteamID>,
+    #[serde(rename = "primaryclanid")]
+    pub primary_clan_id: Option<SteamID>,
     /// Unix timestamp of users creation
     #[serde(rename = "timecreated")]
     pub time_created: Option<u32>,

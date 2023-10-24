@@ -67,7 +67,7 @@ mod tests {
         let achievements =
             block_on(client.get_global_achievement_percentages_for_app(game_id)).unwrap();
 
-        assert_eq!(167, achievements.len());
+        assert_eq!(1, achievements.len());
     }
 
     #[test]

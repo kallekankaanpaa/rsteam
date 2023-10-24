@@ -56,6 +56,6 @@ mod tests {
         let apps = block_on(client.get_app_list()).unwrap();
         assert!(apps
             .iter()
-            .any(|app| app.id == 730 && app.name == "Counter-Strike: Global Offensive"));
+            .any(|app| app.id == 730 && app.name == "Counter-Strike 2"));
     }
 }

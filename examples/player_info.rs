@@ -72,7 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "User belongs to {} groups and their primary group is {}",
         group_list.len(),
-        match &summary.primaryclanid {
+        match &summary.primary_clan_id {
             Some(id) => client.get_group_summary(id).await?.details.name,
             None => "User has no primary group".to_owned(),
         }
@@ -89,22 +89,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         friend_list.len(),
         banned_friends.len() as f32 / cmp::max(friend_list.len(), 1) as f32 * 100_f32
     );
-    let recent_3: Vec<String> = three_recent_games
-        .games
-        .iter()
-        .map(|g| format!("{} ({:.1}h)", g.name, g.playtime_2weeks as f32 / 60 as f32))
-        .collect();
-    println!(
-        "The user has played, {} and {} other games recently",
-        recent_3.join(", "),
-        cmp::max(three_recent_games.total_count, 3) - 3,
-    );
 
-    let online_secs = time::SystemTime::now().duration_since(time::UNIX_EPOCH).expect("Something funny happened").as_secs() - summary.last_logoff as u64;
-    match summary.status {
-        Status::Offline => println!(
+    if let Some(three_recent_games) = three_recent_games {
+        let recent_3: Vec<String> = three_recent_games
+            .games
+            .iter()
+            .map(|g| format!("{} ({:.1}h)", g.name, g.playtime_2weeks as f32 / 60 as f32))
+            .collect();
+        println!(
+            "The user has played, {} and {} other games recently",
+            recent_3.join(", "),
+            cmp::max(three_recent_games.total_count, 3) - 3,
+        );
+    }
+
+    match (&summary.status, summary.last_logoff) {
+        (Status::Offline, Some(last_logoff)) => println!(
             "User was last online {} days ago",
-            (online_secs / 60 / 60 / 24)
+            (time::SystemTime::now().duration_since(time::UNIX_EPOCH).expect("Something funny happened").as_secs() - last_logoff as u64 / 60 / 60 / 24)
         ),
         _ => println!("User is currently {:?}", summary.status),
     }
