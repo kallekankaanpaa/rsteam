@@ -1,4 +1,4 @@
-name: Build and test
+name: Cargo test
 
 on:
   push:
@@ -8,16 +8,12 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
-
   test:
-    runs-on: ubuntu-latest
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        os: [ubuntu, windows, macos]
     environment: Steam
     steps:
     - uses: actions/checkout@v4
