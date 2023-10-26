@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/github/license/KnoxZZ/rsteam)](https://github.com/KnoxZZ/rsteam/blob/master/LICENSE)
 [![Docs](https://img.shields.io/docsrs/rsteam/latest)](https://docs.rs/rsteam)
 [![Downloads](https://img.shields.io/crates/d/rsteam)](https://crates.io/crates/rsteam)
+[![Build](https://img.shields.io/github/actions/workflow/status/kallekankaanpaa/rsteam/ci.yml?branch=master)](https://github.com/kallekankaanpaa/rsteam/actions?query=branch%3Amaster)
 
 Easy to use API wrapper for steam web API.
 - Asynchronous
