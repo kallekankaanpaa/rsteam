@@ -201,7 +201,7 @@ mod tests {
             client.get_player_summaries(&[SteamID::from(76561198061271782)]),
         )
         .unwrap();
-        println!("{:?}", summary);
+        println!("{summary:?}");
         assert!(summary.len() == 1);
     }
 

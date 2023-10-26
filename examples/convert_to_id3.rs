@@ -13,6 +13,6 @@ fn main() {
     let id = SteamID::from(id64);
     let id3 = SteamID3::from(id);
 
-    println!("{}", id);
-    println!("{}", id3);
+    println!("{id}");
+    println!("{id3}");
 }

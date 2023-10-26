@@ -27,7 +27,7 @@ pub struct SteamID {
 impl fmt::Display for SteamID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let id64: u64 = self.into();
-        write!(f, "{}", id64)
+        write!(f, "{id64}")
     }
 }
 
@@ -147,7 +147,7 @@ impl fmt::Display for SteamID3 {
             _ => None,
         };
         if let Some(letter) = account_type_letter {
-            write!(f, "[{}:{}:{}]", letter, universe, account_id)
+            write!(f, "[{letter}:{universe}:{account_id}]")
         } else {
             write!(f, "Account can not be represented as 32-bit id")
         }
@@ -207,13 +207,13 @@ mod tests {
         let id2 = SteamID2(CORRECT_ID);
         assert_eq!("STEAM_0:0:50503027".parse::<SteamID2>().unwrap(), id2);
         assert_eq!("STEAM_1:0:50503027".parse::<SteamID2>().unwrap(), id2);
-        assert_eq!(format!("{}", id2), "STEAM_1:0:50503027");
+        assert_eq!(format!("{id2}"), "STEAM_1:0:50503027");
     }
 
     #[test]
     fn id3() {
         let id3 = SteamID3(CORRECT_ID);
         assert_eq!("[U:1:101006054]".parse::<SteamID3>().unwrap(), id3);
-        assert_eq!(format!("{}", id3), "[U:1:101006054]");
+        assert_eq!(format!("{id3}"), "[U:1:101006054]");
     }
 }

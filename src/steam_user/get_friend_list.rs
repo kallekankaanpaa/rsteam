@@ -23,7 +23,7 @@ impl fmt::Display for Relation {
             Relation::Friend => "friend",
             Relation::All => "other",
         };
-        write!(f, "{}", repr)
+        write!(f, "{repr}")
     }
 }
 
@@ -87,7 +87,7 @@ mod tests {
                 .unwrap();
 
         for f in &friends {
-            println!("{:?}", f);
+            println!("{f:?}");
         }
 
         assert!(!friends.is_empty());

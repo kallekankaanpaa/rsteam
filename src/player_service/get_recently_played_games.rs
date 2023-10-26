@@ -74,7 +74,7 @@ mod tests {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198061271782);
         let recent = block_on(client.get_recently_played_games(&id, None));
-        println!("{:?}", recent);
+        println!("{recent:?}");
         assert_ok!(recent);
     }
 
@@ -83,7 +83,7 @@ mod tests {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let id = SteamID::from(76561198312831106);
         let recent = block_on(client.get_recently_played_games(&id, None));
-        println!("{:?}", recent);
+        println!("{recent:?}");
         assert_ok!(recent);
     }
 }

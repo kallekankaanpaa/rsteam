@@ -62,8 +62,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         false => "\x1b[92mnot VAC banned\x1b[0m",
     };
 
-    println!("Ban status: {}, {}", community_banned, vac_banned);
-    println!("Steam level: {}", steam_level);
+    println!("Ban status: {community_banned}, {vac_banned}");
+    println!("Steam level: {steam_level}");
     println!(
         "Owns {} games and has {} badges",
         owned_games.game_count,

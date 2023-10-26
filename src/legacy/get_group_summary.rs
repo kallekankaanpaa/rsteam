@@ -86,6 +86,6 @@ mod tests {
         let client = SteamClient::new();
         let group_id = SteamID::from(103582791456670032);
         let group_summary = block_on(client.get_group_summary(&group_id)).unwrap();
-        println!("{:?}", group_summary)
+        println!("{group_summary:?}")
     }
 }

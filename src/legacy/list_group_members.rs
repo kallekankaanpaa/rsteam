@@ -45,7 +45,7 @@ impl SteamClient {
         let gid = SteamID3::from(*group_id).to_string();
         let legacy_id = gid[5..gid.len() - 1].to_owned();
 
-        let path = format!("/gid/{}/memberslistxml?xml=1", legacy_id);
+        let path = format!("/gid/{legacy_id}/memberslistxml?xml=1");
         let uri = Uri::builder()
             .scheme(Scheme::HTTPS)
             .authority(AUTHORITY)
@@ -78,7 +78,7 @@ impl SteamClient {
         let gid = SteamID3::from(*group_id).to_string();
         let legacy_id = gid[5..gid.len() - 1].to_owned();
 
-        let path = format!("/gid/{}/memberslistxml?xml=1&p={}", legacy_id, page);
+        let path = format!("/gid/{legacy_id}/memberslistxml?xml=1&p={page}");
         let uri = Uri::builder()
             .scheme(Scheme::HTTPS)
             .authority(AUTHORITY)

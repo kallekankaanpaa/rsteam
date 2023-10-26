@@ -24,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let id = client.resolve_vanity_url(&vanity_url, None).await?;
 
-    println!("{}", id);
+    println!("{id}");
 
     Ok(())
 }

@@ -82,10 +82,10 @@ mod tests {
             tokio_test::block_on(client.get_user_stats_for_game(&id, game_id)).unwrap();
 
         for stat in &player_stats.stats {
-            println!("{:?}", stat)
+            println!("{stat:?}")
         }
         for achievement in &player_stats.achievements {
-            println!("{:?}", achievement)
+            println!("{achievement:?}")
         }
         assert!(!player_stats.stats.is_empty());
         assert!(!player_stats.achievements.is_empty());
