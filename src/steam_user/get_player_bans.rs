@@ -45,7 +45,7 @@ impl SteamClient {
     /// don't assume the returned [BanDatas](BanData) are in the same order as
     /// the [SteamIDs](SteamID). Always check the [SteamID] from the [BanData]
     /// struct
-    pub async fn get_player_bans(&self, ids: &Vec<SteamID>) -> Result<Vec<BanData>> {
+    pub async fn get_player_bans(&self, ids: &[SteamID]) -> Result<Vec<BanData>> {
         let api_key = self
             .api_key
             .as_ref()
@@ -56,11 +56,11 @@ impl SteamClient {
             .map(|id| id.to_string())
             .collect::<Vec<String>>()
             .join(",");
-        let query = format!("key={}&steamids={}", api_key, id_query);
+        let query = format!("key={api_key}&steamids={id_query}");
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
-            .path_and_query(format!("{}?{}", PATH, query))
+            .path_and_query(format!("{PATH}?{query}"))
             .build()?;
 
         let response = self.client.get(uri).await;

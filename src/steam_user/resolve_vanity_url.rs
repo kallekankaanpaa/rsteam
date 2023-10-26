@@ -32,9 +32,9 @@ struct Response {
 type Resp = ResponseWrapper<Response>;
 
 impl SteamClient {
-    /// Gets users [SteamID] based on users vanity url
+    /// Gets users [`SteamID`] based on users vanity url
     ///
-    /// Requires an API key. Default [URLType] is individual.
+    /// Requires an API key. Default [`URLType`] is individual.
     pub async fn resolve_vanity_url(
         &self,
         vanity_url: &str,
@@ -46,11 +46,11 @@ impl SteamClient {
             .ok_or_else(|| Error::client("API key required"))?;
 
         let type_query = optional_query!(url_type);
-        let query = format!("key={}&vanityurl={}{}", api_key, vanity_url, type_query);
+        let query = format!("key={api_key}&vanityurl={vanity_url}{type_query}");
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
-            .path_and_query(format!("{}?{}", PATH, query))
+            .path_and_query(format!("{PATH}?{query}"))
             .build()?;
 
         let raw_response = self.client.get(uri).await;

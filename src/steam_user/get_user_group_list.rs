@@ -33,11 +33,11 @@ impl SteamClient {
             .as_ref()
             .ok_or_else(|| Error::client("API key required"))?;
 
-        let query = format!("key={}&steamid={}", api_key, id);
+        let query = format!("key={api_key}&steamid={id}");
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
-            .path_and_query(format!("{}?{}", PATH, query))
+            .path_and_query(format!("{PATH}?{query}"))
             .build()?;
 
         let response = self.client.get(uri).await?;

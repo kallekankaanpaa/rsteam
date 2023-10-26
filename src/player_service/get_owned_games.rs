@@ -55,11 +55,11 @@ impl SteamClient {
         let q3 = optional_query!(include_free_sub);
         let q4 = optional_query!(skip_unvetted_apps);
 
-        let query = format!("key={}&steamid={}{}{}{}{}", api_key, id, q1, q2, q3, q4);
+        let query = format!("key={api_key}&steamid={id}{q1}{q2}{q3}{q4}");
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
-            .path_and_query(format!("{}?{}", PATH, query))
+            .path_and_query(format!("{PATH}?{query}"))
             .build()?;
 
         let raw_response = self.client.get(uri).await?;

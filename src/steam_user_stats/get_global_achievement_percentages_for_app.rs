@@ -28,18 +28,18 @@ struct Response {
 }
 
 impl SteamClient {
-    /// Fetches a vector of [AchievementData] structs for the given game_id.
+    /// Fetches a vector of [`AchievementData`] structs for the given `game_id`.
     ///
     /// Works without an API key.
     pub async fn get_global_achievement_percentages_for_app(
         &self,
         game_id: NonZeroU64,
     ) -> Result<Vec<AchievementData>> {
-        let query = format!("gameid={}", game_id);
+        let query = format!("gameid={game_id}");
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
-            .path_and_query(format!("{}?{}", PATH, query))
+            .path_and_query(format!("{PATH}?{query}"))
             .build()?;
 
         let raw_response = self.client.get(uri).await?;

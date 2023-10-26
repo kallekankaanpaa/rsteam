@@ -12,9 +12,10 @@ use serde::Deserialize;
 
 const PATH: &str = "/ISteamUser/GetPlayerSummaries/v0002/";
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 #[serde(from = "u32")]
 pub enum CommentPermission {
+    #[default]
     FriendsOnly = 0,
     Public = 1,
     Private = 2,
@@ -26,20 +27,15 @@ impl From<u32> for CommentPermission {
             0 => CommentPermission::FriendsOnly,
             1 => CommentPermission::Public,
             2 => CommentPermission::Private,
-            _ => CommentPermission::FriendsOnly,
+            _ => CommentPermission::default(),
         }
     }
 }
 
-impl Default for CommentPermission {
-    fn default() -> Self {
-        CommentPermission::FriendsOnly
-    }
-}
-
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 #[serde(from = "u32")]
 pub enum Visibility {
+    #[default]
     Private = 1,
     Visible = 3,
 }
@@ -49,14 +45,15 @@ impl From<u32> for Visibility {
         match v {
             1 => Visibility::Private,
             3 => Visibility::Visible,
-            _ => Visibility::Private,
+            _ => Visibility::default(),
         }
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 #[serde(from = "u32")]
 pub enum Status {
+    #[default]
     Offline = 0,
     Online = 1,
     Busy = 2,
@@ -76,14 +73,15 @@ impl From<u32> for Status {
             4 => Status::Snooze,
             5 => Status::LookingToTrade,
             6 => Status::LookingToPlay,
-            _ => Status::Offline,
+            _ => Status::default(),
         }
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 #[serde(from = "u32")]
 pub enum ProfileState {
+    #[default]
     Unconfigured = 0,
     Configured = 1,
 }
@@ -93,7 +91,7 @@ impl From<u32> for ProfileState {
         match value {
             0 => ProfileState::Unconfigured,
             1 => ProfileState::Configured,
-            _ => ProfileState::Unconfigured,
+            _ => ProfileState::default(),
         }
     }
 }
@@ -162,7 +160,7 @@ impl SteamClient {
     /// just drops the summary from the response. So don't assume the returned
     /// [Summaries](Summary) are in the same order as the [SteamIDs](SteamID).
     /// Always check the [SteamID] from the [Summary] struct.
-    pub async fn get_player_summaries(&self, ids: &Vec<SteamID>) -> Result<Vec<Summary>> {
+    pub async fn get_player_summaries(&self, ids: &[SteamID]) -> Result<Vec<Summary>> {
         let api_key = self
             .api_key
             .as_ref()
@@ -176,11 +174,11 @@ impl SteamClient {
             .map(|id| id.to_string())
             .collect::<Vec<String>>()
             .join(",");
-        let query = format!("key={}&steamids={}", api_key, id_query);
+        let query = format!("key={api_key}&steamids={id_query}");
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
-            .path_and_query(format!("{}?{}", PATH, query))
+            .path_and_query(format!("{PATH}?{query}"))
             .build()?;
 
         let response = self.client.get(uri).await;

@@ -63,14 +63,13 @@ impl SteamClient {
         let query_tags = vec_query!(tags, "tags");
 
         let query = format!(
-            "appid={}{}{}{}{}{}",
-            app_id, query_content, query_date, query_count, query_feeds, query_tags
+            "appid={app_id}{query_content}{query_date}{query_count}{query_feeds}{query_tags}"
         );
 
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
-            .path_and_query(format!("{}?{}", PATH, query))
+            .path_and_query(format!("{PATH}?{query}"))
             .build()?;
 
         let raw_response = self.client.get(uri).await?;

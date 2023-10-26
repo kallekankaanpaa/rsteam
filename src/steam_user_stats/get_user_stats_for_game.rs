@@ -40,7 +40,7 @@ pub struct PlayerStats {
 }
 
 impl SteamClient {
-    /// Gets users [PlayerStats] for given game
+    /// Gets users [`PlayerStats`] for given game
     ///
     /// Requires an API key.
     pub async fn get_user_stats_for_game(
@@ -53,11 +53,11 @@ impl SteamClient {
             .as_ref()
             .ok_or_else(|| Error::client("API key required"))?;
 
-        let query = format!("key={}&steamid={}&appid={}", api_key, id, game_id);
+        let query = format!("key={api_key}&steamid={id}&appid={game_id}");
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
-            .path_and_query(format!("{}?{}", PATH, query))
+            .path_and_query(format!("{PATH}?{query}"))
             .build()?;
 
         let response = self.client.get(uri).await?;

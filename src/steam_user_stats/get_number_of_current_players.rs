@@ -22,11 +22,11 @@ impl SteamClient {
     ///
     /// Works without an API key.
     pub async fn get_number_of_current_players(&self, game_id: NonZeroU32) -> Result<u32> {
-        let query = format!("appid={}", game_id);
+        let query = format!("appid={game_id}");
         let uri = Uri::builder()
             .scheme("https")
             .authority(AUTHORITY)
-            .path_and_query(format!("{}?{}", PATH, query))
+            .path_and_query(format!("{PATH}?{query}"))
             .build()?;
 
         let raw_response = self.client.get(uri).await?;
@@ -39,11 +39,12 @@ impl SteamClient {
             result,
         } = response.response;
 
-        if result == 1 && player_count.is_some() {
-            Ok(player_count.unwrap())
+
+        if let (Some(count), 1) = (player_count, result) {
+            Ok(count)
         } else {
             Err(Error::Client(
-                "request failed  check that game_id is valid".to_owned(),
+                "request failed check that game_id is valid".to_owned(),
             ))
         }
     }
