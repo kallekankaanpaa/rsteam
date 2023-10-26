@@ -8,5 +8,5 @@ mod resolve_vanity_url;
 
 pub use get_friend_list::{Friend, Relation};
 pub use get_player_bans::{BanData, EconomyBanStatus};
-pub use get_player_summaries::{Status, Summary, Visibility, ProfileState, CommentPermission};
+pub use get_player_summaries::{CommentPermission, ProfileState, Status, Summary, Visibility};
 pub use resolve_vanity_url::URLType;

@@ -59,8 +59,7 @@ impl SteamClient {
         let mut first_page: Group = from_str(&stringified?)?;
 
         // First allocate space for all members and then add members from first page
-        let mut members: Vec<SteamID> =
-            Vec::with_capacity(first_page.member_count as usize);
+        let mut members: Vec<SteamID> = Vec::with_capacity(first_page.member_count as usize);
         members.append(&mut first_page.members.steam_ids);
 
         let mut futures = vec![self.fetch_page(group_id, 2)];

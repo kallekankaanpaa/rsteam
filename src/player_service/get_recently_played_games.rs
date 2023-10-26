@@ -67,7 +67,7 @@ impl SteamClient {
 mod tests {
     use super::*;
     use std::env;
-    use tokio_test::{block_on, assert_ok};
+    use tokio_test::{assert_ok, block_on};
 
     #[test]
     fn public_profile() {

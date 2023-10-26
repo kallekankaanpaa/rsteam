@@ -39,7 +39,6 @@ impl SteamClient {
             result,
         } = response.response;
 
-
         if let (Some(count), 1) = (player_count, result) {
             Ok(count)
         } else {

@@ -3,9 +3,7 @@ use std::net::Ipv4Addr;
 use crate::client::SteamClient;
 use crate::error::Error;
 use crate::steam_id::SteamID;
-use crate::utils::{
-    PlayersWrapper, ResponseWrapper, Result, AUTHORITY,
-};
+use crate::utils::{PlayersWrapper, ResponseWrapper, Result, AUTHORITY};
 use hyper::body::to_bytes;
 use hyper::Uri;
 use serde::Deserialize;
@@ -102,16 +100,16 @@ pub struct Summary {
     #[serde(rename = "steamid")]
     pub id: SteamID,
     /// Visibility of the profile
-    /// 
-    /// Visibility is determined from the viewpoint of the API key owner. 
+    ///
+    /// Visibility is determined from the viewpoint of the API key owner.
     #[serde(rename = "communityvisibilitystate")]
     pub visibility: Visibility,
     #[serde(rename = "profilestate")]
-    pub profile_state: ProfileState, 
+    pub profile_state: ProfileState,
     #[serde(rename = "personaname")]
     pub profile_name: String,
     /// Unix timestamp of users last logoff
-    /// 
+    ///
     /// Only available for Steam users that are friends of the user whose API key is used
     #[serde(rename = "lastlogoff")]
     pub last_logoff: Option<u32>,
