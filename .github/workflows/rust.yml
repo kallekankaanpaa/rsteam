@@ -2,12 +2,39 @@ name: Cargo test
 
 on:
   push:
-    branches: ["master"]
+    branches: [master, next]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  clippy:
+    name: Run rustfmt and Clippy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        components: rustfmt, clippy
+    - name: Rustfmt
+      run: cargo fmt
+    - name: Clippy
+      run: cargo clippy
+  
+  minimal-versions:
+    name: Build with direct-minimal-versions flag
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: nightly
+    - name: Build
+      run: cargo build -Zdirect-minimal-versions
+
   test:
     name: Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}-latest
