@@ -8,7 +8,7 @@ use serde::Deserialize;
 
 const PATH: &str = "/ISteamUser/GetPlayerBans/v1";
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum EconomyBanStatus {
     None,
@@ -16,7 +16,7 @@ pub enum EconomyBanStatus {
     Unknown,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Deserialize)]
 pub struct BanData {
     #[serde(rename = "SteamId")]
     pub id: SteamID,
@@ -38,12 +38,12 @@ pub struct BanData {
 type Response = PlayersWrapper<BanData>;
 
 impl SteamClient {
-    /// Gets vector of [`BanData`] structs
+    /// Gets vector of [BanData] structs
     ///
-    /// Requires an API key. If the [`SteamID`] is invalid or user doesn't exist
-    /// with the ID the API just drops the [`BanData`] from the response. So
-    /// don't assume the returned [`BanDatas`](BanData) are in the same order as
-    /// the [`SteamIDs`](SteamID). Always check the [`SteamID`] from the [`BanData`]
+    /// Requires an API key. If the [SteamID] is invalid or user doesn't exist
+    /// with the ID the API just drops the [BanData] from the response. So
+    /// don't assume the returned [BanDatas](BanData) are in the same order as
+    /// the [SteamIDs](SteamID). Always check the [SteamID] from the [BanData]
     /// struct
     pub async fn get_player_bans(&self, ids: &[SteamID]) -> Result<Vec<BanData>> {
         let api_key = self
@@ -53,7 +53,7 @@ impl SteamClient {
 
         let id_query = ids
             .iter()
-            .map(std::string::ToString::to_string)
+            .map(|id| id.to_string())
             .collect::<Vec<String>>()
             .join(",");
         let query = format!("key={api_key}&steamids={id_query}");
@@ -79,7 +79,7 @@ mod tests {
     fn works() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let ban_data =
-            tokio_test::block_on(client.get_player_bans(&[SteamID::from(76561198061271782)]))
+            tokio_test::block_on(client.get_player_bans(&vec![SteamID::from(76561198061271782)]))
                 .unwrap();
         assert_eq!(
             ban_data,

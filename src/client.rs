@@ -27,7 +27,7 @@ impl SteamClient {
     pub fn with_api_key(key: &str) -> Self {
         let https_connector = HttpsConnectorBuilder::new().with_native_roots().https_only().enable_all_versions().build();
 
-        SteamClient {
+        Self {
             client: HyperClient::builder().build::<_, Body>(https_connector),
             api_key: Some(key.to_owned()),
         }
@@ -40,7 +40,7 @@ impl SteamClient {
     pub fn new() -> Self {
         let https_connector = HttpsConnectorBuilder::new().with_native_roots().https_only().enable_all_versions().build();
 
-        SteamClient {
+        Self {
             client: HyperClient::builder().build::<_, Body>(https_connector),
             api_key: None,
         }

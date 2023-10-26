@@ -8,20 +8,14 @@ use rsteam::{SteamClient, SteamID};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let api_key = match env::var("STEAM_API_KEY") {
-        Ok(key) => key,
-        Err(_) => {
-            println!("Remember to set the STEAM_API_KEY environment variable");
-            return Ok(());
-        }
+    let Ok(api_key) = env::var("STEAM_API_KEY") else {
+        println!("Remember to set the STEAM_API_KEY environment variable");
+        return Ok(());
     };
 
-    let vanity_url = match env::args().nth(1) {
-        Some(url) => url,
-        None => {
-            println!("Please provide vanity url (custom steam id).");
-            return Ok(());
-        }
+    let Some(vanity_url) = env::args().nth(1) else {
+        println!("Please provide vanity url (custom steam id).");
+        return Ok(());
     };
 
     let client = SteamClient::with_api_key(&api_key);
@@ -52,14 +46,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .map(|id| id.to_string())
             .unwrap_or("ID can't be represented as a legacy ID".to_owned())
     );
-    let community_banned = match ban_data.community_banned {
-        true => "\x1b[91mcommunity banned\x1b[0m",
-        false => "\x1b[92mnot community banned\x1b[0m",
+    let community_banned = if ban_data.community_banned {
+        "\x1b[91mcommunity banned\x1b[0m"
+    } else {
+        "\x1b[92mnot community banned\x1b[0m"
     };
 
-    let vac_banned = match ban_data.vac_banned {
-        true => "\x1b[91mVAC banned\x1b[0m",
-        false => "\x1b[92mnot VAC banned\x1b[0m",
+    let vac_banned = if ban_data.vac_banned {
+        "\x1b[91mVAC banned\x1b[0m"
+    } else {
+        "\x1b[92mnot VAC banned\x1b[0m"
     };
 
     println!("Ban status: {community_banned}, {vac_banned}");
@@ -106,14 +102,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match (&summary.status, summary.last_logoff) {
         (Status::Offline, Some(last_logoff)) => println!(
             "User was last online {} days ago",
-            (time::SystemTime::now().duration_since(time::UNIX_EPOCH).expect("Something funny happened").as_secs() - last_logoff as u64 / 60 / 60 / 24)
+            (time::SystemTime::now()
+                .duration_since(time::UNIX_EPOCH)
+                .expect("Something funny happened")
+                .as_secs()
+                - last_logoff as u64 / 60 / 60 / 24)
         ),
         _ => println!("User is currently {:?}", summary.status),
     }
 
     match summary.time_created {
         Some(secs) => {
-            let created_secs = time::SystemTime::now().duration_since(time::UNIX_EPOCH).expect("Something funny happened").as_secs() - secs as u64;
+            let created_secs = time::SystemTime::now()
+                .duration_since(time::UNIX_EPOCH)
+                .expect("Something funny happened")
+                .as_secs()
+                - secs as u64;
             println!("Account created {} days ago", (created_secs / 60 / 60 / 24))
         }
         None => println!("Unknown account age"),

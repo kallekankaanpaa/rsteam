@@ -11,7 +11,7 @@ pub struct SteamError;
 
 impl From<ParseIntError> for SteamError {
     fn from(_: ParseIntError) -> Self {
-        SteamError
+        Self
     }
 }
 
@@ -48,7 +48,7 @@ impl From<u64> for SteamID {
         let account_type = (value << 8 >> 60) as u8;
         #[allow(clippy::cast_possible_truncation)]
         let account_id = value as u32;
-        SteamID {
+        Self {
             universe,
             account_type,
             account_id,
@@ -60,7 +60,7 @@ impl TryFrom<String> for SteamID {
     type Error = Error;
     fn try_from(s: String) -> Result<Self, Self::Error> {
         s.parse::<u64>()
-            .map(SteamID::from)
+            .map(Self::from)
             .map_err(|_| Error::Client("invalid SteamID".to_owned()))
     }
 }
@@ -77,7 +77,7 @@ impl From<SteamID3> for SteamID {
     }
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct SteamID2(SteamID);
 
 impl fmt::Display for SteamID2 {
@@ -102,7 +102,7 @@ impl TryFrom<SteamID> for SteamID2 {
 
     fn try_from(value: SteamID) -> Result<Self, Self::Error> {
         if value.account_type == 1 {
-            Ok(SteamID2(value))
+            Ok(Self(value))
         } else {
             Err(SteamError)
         }
@@ -116,7 +116,7 @@ impl FromStr for SteamID2 {
         let y: u32 = s[8..9].parse()?;
         let z: u32 = s[10..].parse()?;
         let account_id = 2 * z + y;
-        Ok(SteamID2(SteamID {
+        Ok(Self(SteamID {
             universe: if universe == 0 { 1 } else { universe },
             account_type: 1, // SteamID2 can only represent individual accounts
             account_id,
@@ -124,7 +124,7 @@ impl FromStr for SteamID2 {
     }
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct SteamID3(SteamID);
 
 impl fmt::Display for SteamID3 {
@@ -157,7 +157,7 @@ impl fmt::Display for SteamID3 {
 
 impl From<SteamID> for SteamID3 {
     fn from(id: SteamID) -> Self {
-        SteamID3(id)
+        Self(id)
     }
 }
 
@@ -179,7 +179,7 @@ impl FromStr for SteamID3 {
         }?;
         let universe: u8 = s[3..4].parse()?;
         let account_id: u32 = s[5..s.len() - 1].parse()?;
-        Ok(SteamID3(SteamID {
+        Ok(Self(SteamID {
             universe,
             account_type,
             account_id,

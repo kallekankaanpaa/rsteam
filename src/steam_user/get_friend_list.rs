@@ -10,7 +10,7 @@ use serde::Deserialize;
 
 const PATH: &str = "/ISteamUser/GetFriendList/v1";
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Relation {
     Friend,
@@ -20,14 +20,14 @@ pub enum Relation {
 impl fmt::Display for Relation {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let repr = match self {
-            Relation::Friend => "friend",
-            Relation::All => "other",
+            Self::Friend => "friend",
+            Self::All => "other",
         };
         write!(f, "{repr}")
     }
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Eq)]
 pub struct Friend {
     #[serde(rename = "steamid")]
     pub id: SteamID,

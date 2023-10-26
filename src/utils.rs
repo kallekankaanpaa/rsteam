@@ -8,32 +8,26 @@ pub const AUTHORITY: &str = "api.steampowered.com";
 pub type Result<T> = StdResult<T, Error>;
 
 #[derive(Deserialize)]
-pub(crate) struct ResponseMaybeEmpty<R> {
+pub struct ResponseMaybeEmpty<R> {
     #[serde(bound(deserialize = "R: Deserialize<'de>"))]
     #[serde(deserialize_with = "deserialize_default_from_empty_object")]
-    pub(crate) response: Option<R>
+    pub response: Option<R>
 }
 
 #[derive(Deserialize)]
-pub(crate) struct ResponseWrapper<R> {
-    pub(crate) response: R,
+pub struct ResponseWrapper<R> {
+    pub response: R,
 }
 
 #[derive(Deserialize)]
-pub(crate) struct PlayersWrapper<P> {
-    pub(crate) players: Vec<P>,
+pub struct PlayersWrapper<P> {
+    pub players: Vec<P>,
 }
 
-pub(crate) fn u64_from_str<'de, D>(deserializer: D) -> StdResult<u64, D::Error>
+pub fn u64_from_str<'de, D>(deserializer: D) -> StdResult<u64, D::Error>
 where
     D: Deserializer<'de>,
 {
     let value = String::deserialize(deserializer)?;
-    match value.parse::<u64>() {
-        Ok(integer) => Ok(integer),
-        Err(_) => Err(de::Error::invalid_value(
-            Unexpected::Str(&value),
-            &"u64 in a string",
-        )),
-    }
+    value.parse::<u64>().map_err(|_| de::Error::invalid_value(Unexpected::Str(&value), &"u64 in a string"),)
 }

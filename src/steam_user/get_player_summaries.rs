@@ -24,10 +24,10 @@ pub enum CommentPermission {
 impl From<u32> for CommentPermission {
     fn from(c: u32) -> Self {
         match c {
-            0 => CommentPermission::FriendsOnly,
-            1 => CommentPermission::Public,
-            2 => CommentPermission::Private,
-            _ => CommentPermission::default(),
+            0 => Self::FriendsOnly,
+            1 => Self::Public,
+            2 => Self::Private,
+            _ => Self::default(),
         }
     }
 }
@@ -43,9 +43,9 @@ pub enum Visibility {
 impl From<u32> for Visibility {
     fn from(v: u32) -> Self {
         match v {
-            1 => Visibility::Private,
-            3 => Visibility::Visible,
-            _ => Visibility::default(),
+            1 => Self::Private,
+            3 => Self::Visible,
+            _ => Self::default(),
         }
     }
 }
@@ -66,14 +66,14 @@ pub enum Status {
 impl From<u32> for Status {
     fn from(status: u32) -> Self {
         match status {
-            0 => Status::Offline,
-            1 => Status::Online,
-            2 => Status::Busy,
-            3 => Status::Away,
-            4 => Status::Snooze,
-            5 => Status::LookingToTrade,
-            6 => Status::LookingToPlay,
-            _ => Status::default(),
+            0 => Self::Offline,
+            1 => Self::Online,
+            2 => Self::Busy,
+            3 => Self::Away,
+            4 => Self::Snooze,
+            5 => Self::LookingToTrade,
+            6 => Self::LookingToPlay,
+            _ => Self::default(),
         }
     }
 }
@@ -89,9 +89,9 @@ pub enum ProfileState {
 impl From<u32> for ProfileState {
     fn from(value: u32) -> Self {
         match value {
-            0 => ProfileState::Unconfigured,
-            1 => ProfileState::Configured,
-            _ => ProfileState::default(),
+            0 => Self::Unconfigured,
+            1 => Self::Configured,
+            _ => Self::default(),
         }
     }
 }
@@ -155,11 +155,11 @@ type Response = ResponseWrapper<PlayersWrapper<Summary>>;
 impl SteamClient {
     /// Gets vector of player/account [Summaries](Summary).
     ///
-    /// Requires an API key and works with maximum of 100 [`SteamIDs`](SteamID).
-    /// If the [`SteamID`] is invalid or user doesn't exist with the ID the API
+    /// Requires an API key and works with maximum of 100 [SteamIDs](SteamID).
+    /// If the [SteamID] is invalid or user doesn't exist with the ID the API
     /// just drops the summary from the response. So don't assume the returned
-    /// [Summaries](Summary) are in the same order as the [`SteamIDs`](SteamID).
-    /// Always check the [`SteamID`] from the [Summary] struct.
+    /// [Summaries](Summary) are in the same order as the [SteamIDs](SteamID).
+    /// Always check the [SteamID] from the [Summary] struct.
     pub async fn get_player_summaries(&self, ids: &[SteamID]) -> Result<Vec<Summary>> {
         let api_key = self
             .api_key
@@ -171,7 +171,7 @@ impl SteamClient {
         }
         let id_query = ids
             .iter()
-            .map(std::string::ToString::to_string)
+            .map(|id| id.to_string())
             .collect::<Vec<String>>()
             .join(",");
         let query = format!("key={api_key}&steamids={id_query}");
@@ -198,18 +198,20 @@ mod tests {
     fn works_with_single() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let summary = tokio_test::block_on(
-            client.get_player_summaries(&[SteamID::from(76561198061271782)]),
+            client.get_player_summaries(&vec![SteamID::from(76561198061271782)]),
         )
         .unwrap();
-        println!("{summary:?}");
+        println!("{:?}", summary);
         assert!(summary.len() == 1);
     }
 
     #[test]
     fn works_with_multiple() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
-        let summary = tokio_test::block_on(client.get_player_summaries(&[SteamID::from(76561198061271782),
-            SteamID::from(76561198072766352)]))
+        let summary = tokio_test::block_on(client.get_player_summaries(&vec![
+            SteamID::from(76561198061271782),
+            SteamID::from(76561198072766352),
+        ]))
         .unwrap();
         assert!(summary.len() == 2);
     }
@@ -218,7 +220,7 @@ mod tests {
     fn works_with_invalid() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let summary = tokio_test::block_on(
-            client.get_player_summaries(&[SteamID::from(7656119806127178)]),
+            client.get_player_summaries(&vec![SteamID::from(7656119806127178)]),
         )
         .unwrap();
         assert!(summary.is_empty());
