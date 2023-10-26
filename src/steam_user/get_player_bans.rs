@@ -53,7 +53,7 @@ impl SteamClient {
 
         let id_query = ids
             .iter()
-            .map(|id| id.to_string())
+            .map(std::string::ToString::to_string)
             .collect::<Vec<String>>()
             .join(",");
         let query = format!("key={api_key}&steamids={id_query}");
@@ -79,7 +79,7 @@ mod tests {
     fn works() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let ban_data =
-            tokio_test::block_on(client.get_player_bans(&vec![SteamID::from(76561198061271782)]))
+            tokio_test::block_on(client.get_player_bans(&[SteamID::from(76561198061271782)]))
                 .unwrap();
         assert_eq!(
             ban_data,

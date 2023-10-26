@@ -27,7 +27,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = SteamClient::with_api_key(&api_key);
 
     let id = client.resolve_vanity_url(&vanity_url, None).await?;
-    let id_vec = vec![id.clone()];
+    let id_vec = vec![id];
 
     let ban_datas = client.get_player_bans(&id_vec).await?;
     let ban_data = ban_datas.first().ok_or("Fetching ban data failed")?;
@@ -47,8 +47,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "SteamID: {} / {} / {}",
         &id,
-        SteamID3::from(id.clone()),
-        SteamID2::try_from(id.clone())
+        SteamID3::from(id),
+        SteamID2::try_from(id)
             .map(|id| id.to_string())
             .unwrap_or("ID can't be represented as a legacy ID".to_owned())
     );
@@ -77,7 +77,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             None => "User has no primary group".to_owned(),
         }
     );
-    let friend_ids: Vec<SteamID> = friend_list.iter().map(|f| f.id.clone()).collect();
+    let friend_ids: Vec<SteamID> = friend_list.iter().map(|f| f.id).collect();
     let banned_friends: Vec<BanData> = client
         .get_player_bans(&friend_ids)
         .await?
@@ -94,7 +94,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let recent_3: Vec<String> = three_recent_games
             .games
             .iter()
-            .map(|g| format!("{} ({:.1}h)", g.name, g.playtime_2weeks as f32 / 60 as f32))
+            .map(|g| format!("{} ({:.1}h)", g.name, g.playtime_2weeks as f32 / 60_f32))
             .collect();
         println!(
             "The user has played, {} and {} other games recently",

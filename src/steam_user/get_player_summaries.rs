@@ -171,7 +171,7 @@ impl SteamClient {
         }
         let id_query = ids
             .iter()
-            .map(|id| id.to_string())
+            .map(std::string::ToString::to_string)
             .collect::<Vec<String>>()
             .join(",");
         let query = format!("key={api_key}&steamids={id_query}");
@@ -198,7 +198,7 @@ mod tests {
     fn works_with_single() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let summary = tokio_test::block_on(
-            client.get_player_summaries(&vec![SteamID::from(76561198061271782)]),
+            client.get_player_summaries(&[SteamID::from(76561198061271782)]),
         )
         .unwrap();
         println!("{:?}", summary);
@@ -208,10 +208,8 @@ mod tests {
     #[test]
     fn works_with_multiple() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
-        let summary = tokio_test::block_on(client.get_player_summaries(&vec![
-            SteamID::from(76561198061271782),
-            SteamID::from(76561198072766352),
-        ]))
+        let summary = tokio_test::block_on(client.get_player_summaries(&[SteamID::from(76561198061271782),
+            SteamID::from(76561198072766352)]))
         .unwrap();
         assert!(summary.len() == 2);
     }
@@ -220,7 +218,7 @@ mod tests {
     fn works_with_invalid() {
         let client = SteamClient::with_api_key(&env::var("STEAM_API_KEY").unwrap());
         let summary = tokio_test::block_on(
-            client.get_player_summaries(&vec![SteamID::from(7656119806127178)]),
+            client.get_player_summaries(&[SteamID::from(7656119806127178)]),
         )
         .unwrap();
         assert!(summary.is_empty());

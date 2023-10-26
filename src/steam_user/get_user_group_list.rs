@@ -50,7 +50,7 @@ impl SteamClient {
             Ok(groups
                 .into_iter()
                 .filter_map(|g| g.gid.parse::<u64>().ok())
-                .map(|n| n.into())
+                .map(std::convert::Into::into)
                 .collect::<Vec<SteamID>>())
         } else {
             Err(Error::Client("request failed".to_owned()))
