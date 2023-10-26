@@ -10,7 +10,7 @@ use hyper::Uri;
 const PATH: &str = "/IPlayerService/GetOwnedGames/v0001/";
 
 /// The playtimes are in minutes and platform specific playtimes
-/// may not add up to playtime_forever.
+/// may not add up to `playtime_forever`.
 #[derive(Deserialize, Debug)]
 pub struct Game {
     pub appid: u32,

@@ -46,7 +46,7 @@ struct FriendList {
 }
 
 impl SteamClient {
-    /// Returns a vector of [Friends](Friend) for the provided [SteamID]
+    /// Returns a vector of [Friends](Friend) for the provided [`SteamID`]
     ///
     /// Requires an API key.
     pub async fn get_friend_list(

@@ -1,4 +1,4 @@
-//! Implementations for the ISteamUser interface
+//! Implementations for the `ISteamUser` interface
 
 mod get_friend_list;
 mod get_player_bans;

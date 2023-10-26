@@ -24,7 +24,7 @@ struct Resp {
 type Response = ResponseWrapper<Resp>;
 
 impl SteamClient {
-    /// Fetches vector of [SteamIDs](SteamID) which represent the ids for the users groups
+    /// Fetches vector of [`SteamIDs`](SteamID) which represent the ids for the users groups
     ///
     /// Requires an API key.
     pub async fn get_user_group_list(&self, id: &SteamID) -> Result<Vec<SteamID>> {

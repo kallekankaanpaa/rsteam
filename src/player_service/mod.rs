@@ -1,4 +1,4 @@
-//! Implementations for the IPlayerService interface
+//! Implementations for the `IPlayerService` interface
 
 mod get_badges;
 mod get_community_badge_progress;

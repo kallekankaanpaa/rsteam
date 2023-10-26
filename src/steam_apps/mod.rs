@@ -1,4 +1,4 @@
-//! Implementations for ISteamApps interface
+//! Implementations for `ISteamApps` interface
 
 mod get_app_list;
 
