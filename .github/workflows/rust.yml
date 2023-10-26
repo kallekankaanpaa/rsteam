@@ -19,9 +19,9 @@ jobs:
         toolchain: stable
         components: rustfmt, clippy
     - name: Rustfmt
-      run: cargo fmt
+      run: cargo fmt --all -- --check
     - name: Clippy
-      run: cargo clippy
+      run: cargo clippy -- -D warnings
   
   minimal-versions:
     name: Build with direct-minimal-versions flag
@@ -33,7 +33,7 @@ jobs:
         profile: minimal
         toolchain: nightly
     - name: Build
-      run: cargo build -Zdirect-minimal-versions
+      run: cargo +nightly build -Zdirect-minimal-versions
 
   test:
     name: Test (${{ matrix.os }})
