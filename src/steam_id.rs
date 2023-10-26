@@ -34,10 +34,10 @@ impl fmt::Display for SteamID {
 #[allow(clippy::from_over_into)]
 impl Into<u64> for &SteamID {
     fn into(self) -> u64 {
-        let universe = (self.universe as u64) << 56;
-        let account_type = (self.account_type as u64) << 52;
+        let universe = u64::from(self.universe) << 56;
+        let account_type = u64::from(self.account_type) << 52;
         let instance = 1_u64 << 32;
-        let account_id = self.account_id as u64;
+        let account_id = u64::from(self.account_id);
         universe | account_type | instance | account_id
     }
 }
@@ -46,6 +46,7 @@ impl From<u64> for SteamID {
     fn from(value: u64) -> Self {
         let universe = (value >> 56) as u8;
         let account_type = (value << 8 >> 60) as u8;
+        #[allow(clippy::cast_possible_truncation)]
         let account_id = value as u32;
         SteamID {
             universe,

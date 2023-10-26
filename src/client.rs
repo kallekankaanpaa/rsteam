@@ -23,6 +23,7 @@ impl SteamClient {
     /// Create a client with an API key.
     ///
     /// Client with API key can use all available APIs.
+    #[must_use]
     pub fn with_api_key(key: &str) -> Self {
         let https_connector = HttpsConnectorBuilder::new().with_native_roots().https_only().enable_all_versions().build();
 
@@ -35,6 +36,7 @@ impl SteamClient {
     /// Create a client without an API key.
     ///
     /// Client without an API key can only use a subset of the APIs.
+    #[must_use]
     pub fn new() -> Self {
         let https_connector = HttpsConnectorBuilder::new().with_native_roots().https_only().enable_all_versions().build();
 

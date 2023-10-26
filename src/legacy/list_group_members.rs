@@ -60,12 +60,12 @@ impl SteamClient {
 
         // First allocate space for all members and then add members from first page
         let mut members: Vec<SteamID> =
-            Vec::with_capacity(first_page.member_count.try_into().unwrap());
+            Vec::with_capacity(first_page.member_count as usize);
         members.append(&mut first_page.members.steam_ids);
 
         let mut futures = vec![self.fetch_page(group_id, 2)];
-        for page_number in 3..first_page.total_page_amount + 1 {
-            futures.push(self.fetch_page(group_id, page_number))
+        for page_number in 3..=first_page.total_page_amount {
+            futures.push(self.fetch_page(group_id, page_number));
         }
 
         for mut page in try_join_all(futures).await? {
