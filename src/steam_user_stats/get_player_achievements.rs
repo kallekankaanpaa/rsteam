@@ -37,9 +37,6 @@ struct Response {
 }
 
 impl SteamClient {
-    /// Gets users [`PlayerStats`] for given game
-    ///
-    /// Requires an API key.
     pub async fn get_player_achievements(
         &self,
         id: &SteamID,
